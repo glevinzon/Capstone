@@ -6,7 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.itp.glevinzon.capstone.models.Datum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,22 +28,24 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private static final int ITEM = 0;
     private static final int LOADING = 1;
+    private static final String BASE_URL_IMG = "https://image.tmdb.org/t/p/w150/9O7gLzmreU0nGkIB6K3BsJbzvNv.jpg";
 
-    private List<Movie> movies;
+    private List<Datum> equationResults;
     private Context context;
 
     private boolean isLoadingAdded = false;
+
     public PaginationAdapter(Context context) {
         this.context = context;
-        movies = new ArrayList<>();
+        equationResults = new ArrayList<>();
     }
 
-    public List<Movie> getMovies() {
-        return movies;
+    public List<Datum> getEquations() {
+        return equationResults;
     }
 
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
+    public void setMovies(List<Datum> equationResults) {
+        this.equationResults = equationResults;
     }
 
     @Override
@@ -65,14 +76,52 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        Movie movie = movies.get(position);
+        Datum data = equationResults.get(position); // Movie
 
         switch (getItemViewType(position)) {
             case ITEM:
-                MovieVH movieVH = (MovieVH) holder;
+                final MovieVH movieVH = (MovieVH) holder;
 
-                movieVH.textView.setText(movie.getTitle());
+                movieVH.mMovieTitle.setText(data.getName());
+
+
+                movieVH.mYear.setText(
+                        data.getCreatedAt().substring(0, 4)  // we want the year only
+                                + " | "
+                                + "EN"
+                );
+                movieVH.mMovieDesc.setText(data.getNote());
+
+                /**
+                 * Using Glide to handle image loading.
+                 * Learn more about Glide here:
+                 * <a href="http://blog.grafixartist.com/image-gallery-app-android-studio-1-4-glide/" />
+                 */
+                Glide
+                        .with(context)
+                        .load(BASE_URL_IMG)
+                        .listener(new RequestListener<String, GlideDrawable>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                // TODO: 08/11/16 handle failure
+                                movieVH.mProgress.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                // image ready, hide progress now
+                                movieVH.mProgress.setVisibility(View.GONE);
+                                return false;   // return false if you want Glide to handle everything else.
+                            }
+                        })
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)   // cache both original & resized image
+                        .centerCrop()
+                        .crossFade()
+                        .into(movieVH.mPosterImg);
+
                 break;
+
             case LOADING:
 //                Do nothing
                 break;
@@ -82,34 +131,35 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return movies == null ? 0 : movies.size();
+        return equationResults == null ? 0 : equationResults.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == movies.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+        return (position == equationResults.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
+
 
     /*
    Helpers
    _________________________________________________________________________________________________
     */
 
-    public void add(Movie mc) {
-        movies.add(mc);
-        notifyItemInserted(movies.size() - 1);
+    public void add(Datum r) {
+        equationResults.add(r);
+        notifyItemInserted(equationResults.size() - 1);
     }
 
-    public void addAll(List<Movie> mcList) {
-        for (Movie mc : mcList) {
-            add(mc);
+    public void addAll(List<Datum> moveResults) {
+        for (Datum data : moveResults) {
+            add(data);
         }
     }
 
-    public void remove(Movie city) {
-        int position = movies.indexOf(city);
+    public void remove(Datum r) {
+        int position = equationResults.indexOf(r);
         if (position > -1) {
-            movies.remove(position);
+            equationResults.remove(position);
             notifyItemRemoved(position);
         }
     }
@@ -128,23 +178,23 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new Movie());
+        add(new Datum());
     }
 
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
-        int position = movies.size() - 1;
-        Movie item = getItem(position);
+        int position = equationResults.size() - 1;
+        Datum data = getItem(position);
 
-        if (item != null) {
-            movies.remove(position);
+        if (data != null) {
+            equationResults.remove(position);
             notifyItemRemoved(position);
         }
     }
 
-    public Movie getItem(int position) {
-        return movies.get(position);
+    public Datum getItem(int position) {
+        return equationResults.get(position);
     }
 
 
@@ -157,12 +207,20 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * Main list's content ViewHolder
      */
     protected class MovieVH extends RecyclerView.ViewHolder {
-        private TextView textView;
+        private TextView mMovieTitle;
+        private TextView mMovieDesc;
+        private TextView mYear; // displays "year | language"
+        private ImageView mPosterImg;
+        private ProgressBar mProgress;
 
         public MovieVH(View itemView) {
             super(itemView);
 
-            textView = (TextView) itemView.findViewById(R.id.item_text);
+            mMovieTitle = (TextView) itemView.findViewById(R.id.movie_title);
+            mMovieDesc = (TextView) itemView.findViewById(R.id.movie_desc);
+            mYear = (TextView) itemView.findViewById(R.id.movie_year);
+            mPosterImg = (ImageView) itemView.findViewById(R.id.movie_poster);
+            mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
         }
     }
 
