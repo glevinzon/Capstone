@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.itp.glevinzon.capstone.models.Datum;
+import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +37,13 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private boolean isLoadingAdded = false;
 
+    private boolean retryPageLoad = false;
+
+    private PaginationAdapterCallback mCallback;
+
     public PaginationAdapter(Context context) {
         this.context = context;
+        this.mCallback = (PaginationAdapterCallback) context;
         equationResults = new ArrayList<>();
     }
 
@@ -123,7 +130,16 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
 
             case LOADING:
-//                Do nothing
+              LoadingVH loadingVH = (LoadingVH) holder;
+
+                if (retryPageLoad) {
+                    loadingVH.mRetryBtn.setVisibility(View.VISIBLE);
+                    loadingVH.mProgressBar.setVisibility(View.GONE);
+                } else {
+                    loadingVH.mRetryBtn.setVisibility(View.GONE);
+                    loadingVH.mProgressBar.setVisibility(View.VISIBLE);
+                }
+
                 break;
         }
 
@@ -197,6 +213,19 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return equationResults.get(position);
     }
 
+    public void showRetry(boolean show) {
+//        if (show) {
+//            retryPageLoad = true;
+//            notifyItemChanged(movieResults.size() - 1);
+//        } else {
+//            retryPageLoad = false;
+//            notifyItemChanged(movieResults.size() - 1);
+//        }
+
+        retryPageLoad = show;
+        notifyItemChanged(equationResults.size() - 1);
+    }
+
 
    /*
    View Holders
@@ -227,8 +256,23 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     protected class LoadingVH extends RecyclerView.ViewHolder {
 
+        private ProgressBar mProgressBar;
+        private ImageButton mRetryBtn;
+
         public LoadingVH(View itemView) {
             super(itemView);
+
+            mProgressBar = (ProgressBar) itemView.findViewById(R.id.loadmore_progress);
+            mRetryBtn = (ImageButton) itemView.findViewById(R.id.loadmore_retry);
+
+            mRetryBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showRetry(false);
+                    mCallback.retryPageLoad();
+                }
+            });
+
         }
     }
 }
