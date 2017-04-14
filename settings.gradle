@@ -1,3 +1,2 @@
-include ':app'
-include ':speech'
-project(':speech').projectDir = file('../../speech')
+include ':app', ':speech'
+project(':speech').projectDir = new File('speech-src')
