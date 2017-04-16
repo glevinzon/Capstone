@@ -13,6 +13,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
             }
         });
 
-//        final Toolbar toolbar = (Toolbar) findViewById(R.id.anim_toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.anim_toolbar);
 //        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
