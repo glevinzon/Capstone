@@ -1,19 +1,27 @@
 package com.itp.glevinzon.capstone;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.itp.glevinzon.capstone.api.CapstoneApi;
 import com.itp.glevinzon.capstone.api.CapstoneService;
@@ -25,11 +33,13 @@ import com.itp.glevinzon.capstone.utils.PaginationScrollListener;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import co.mobiwise.library.InteractivePlayerView;
+import co.mobiwise.library.OnActionClickedListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements PaginationAdapterCallback {
+public class MainActivity extends AppCompatActivity implements PaginationAdapterCallback, OnActionClickedListener {
     private static final String TAG = "MainActivity";
 
     PaginationAdapter adapter;
@@ -50,10 +60,60 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
     private CapstoneService equationService;
 
+    //toolbar
+    private CollapsingToolbarLayout collapsingToolbar;
+    private AppBarLayout appBarLayout;
+
+    private Menu collapsedMenu;
+    private boolean appBarExpanded = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final InteractivePlayerView mInteractivePlayerView = (InteractivePlayerView) findViewById(R.id.interactivePlayerView);
+        mInteractivePlayerView.setMax(114);
+        mInteractivePlayerView.setProgress(50);
+        mInteractivePlayerView.setOnActionClickedListener(this);
+
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.control);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mInteractivePlayerView.isPlaying()) {
+                    mInteractivePlayerView.start();
+                    fab.setImageResource(R.drawable.ic_action_pause);
+                } else {
+                    mInteractivePlayerView.stop();
+                    fab.setImageResource(R.drawable.ic_action_play);
+                }
+            }
+        });
+
+//        final Toolbar toolbar = (Toolbar) findViewById(R.id.anim_toolbar);
+//        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+
+        collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(getString(R.string.android_relevant_results));
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+                R.drawable.header);
+
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @SuppressWarnings("ResourceType")
+            @Override
+            public void onGenerated(Palette palette) {
+                int vibrantColor = palette.getVibrantColor(R.color.primary_500);
+                collapsingToolbar.setContentScrimColor(vibrantColor);
+                collapsingToolbar.setStatusBarScrimColor(R.color.black_trans80);
+            }
+        });
+
 
         rv = (RecyclerView) findViewById(R.id.main_recycler);
         progressBar = (ProgressBar) findViewById(R.id.main_progress);
@@ -106,6 +166,72 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
             }
         });
 
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                Log.d(MainActivity.class.getSimpleName(), "onOffsetChanged: verticalOffset: " + verticalOffset);
+
+                //  Vertical offset == 0 indicates appBar is fully expanded.
+                if (Math.abs(verticalOffset) > 200) {
+                    appBarExpanded = false;
+                    invalidateOptionsMenu();
+                } else {
+                    appBarExpanded = true;
+                    invalidateOptionsMenu();
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (collapsedMenu != null
+                && (!appBarExpanded || collapsedMenu.size() != 1)) {
+            //collapsed
+            collapsedMenu.add("Add")
+                    .setIcon(R.drawable.ic_action_play)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        } else {
+            //expanded
+        }
+        return super.onPrepareOptionsMenu(collapsedMenu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        collapsedMenu = menu;
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_settings:
+                return true;
+        }
+        if (item.getTitle() == "Add") {
+            Toast.makeText(this, "clicked add", Toast.LENGTH_SHORT).show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActionClicked(int id) {
+        switch (id) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                break;
+        }
     }
 
     private void loadFirstPage() {

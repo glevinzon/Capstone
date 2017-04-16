@@ -23,7 +23,11 @@ android {
 ext {
     supportLibVersion = "25.3.0"
 }
-
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -45,6 +49,8 @@ dependencies {
 
     compile 'com.android.support:design:25.3.0'
     compile "com.android.support:palette-v7:${supportLibVersion}"
+
+    compile 'com.github.iammert:InteractivePlayerView:f4f6490290'
 }
 
 

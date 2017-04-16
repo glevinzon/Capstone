@@ -1,6 +1,8 @@
 package com.itp.glevinzon.capstone;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +34,8 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private static final int ITEM = 0;
     private static final int LOADING = 1;
-    private static final String BASE_URL_IMG = "https://image.tmdb.org/t/p/w150/9O7gLzmreU0nGkIB6K3BsJbzvNv.jpg";
+    private static final String BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/m4a-file-format-variant.png";
+    private static final String TAG = "ADAPTER";
 
     private List<Datum> equationResults;
     private Context context;
@@ -127,7 +130,7 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             }
                         })
                         .diskCacheStrategy(DiskCacheStrategy.ALL)   // cache both original & resized image
-                        .centerCrop()
+//                        .centerCrop()
                         .crossFade()
                         .into(movieVH.mPosterImg);
 
@@ -258,7 +261,24 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mYear = (TextView) itemView.findViewById(R.id.movie_year);
             mPosterImg = (ImageView) itemView.findViewById(R.id.movie_poster);
             mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
+
+            mPosterImg.setBackgroundColor(getMatColor("500"));
         }
+    }
+
+    private int getMatColor(String typeColor)
+    {
+        int returnColor = Color.BLACK;
+        int arrayId = this.context.getResources().getIdentifier("mdcolor_" + typeColor, "array", this.context.getPackageName());
+
+        if (arrayId != 0)
+        {
+            TypedArray colors = this.context.getResources().obtainTypedArray(arrayId);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.BLACK);
+            colors.recycle();
+        }
+        return returnColor;
     }
 
 
