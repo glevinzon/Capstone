@@ -44,11 +44,11 @@ public class HomeActivity extends AppCompatActivity implements SpeechDelegate {
         speechLayout = (LinearLayout) findViewById(R.id.speech_layout);;
 
         int[] colors = {
-                ContextCompat.getColor(this, android.R.color.black),
-                ContextCompat.getColor(this, android.R.color.darker_gray),
-                ContextCompat.getColor(this, android.R.color.black),
-                ContextCompat.getColor(this, android.R.color.holo_orange_dark),
-                ContextCompat.getColor(this, android.R.color.holo_red_dark)
+                ContextCompat.getColor(this, R.color.pink),
+                ContextCompat.getColor(this, R.color.black_trans80),
+                ContextCompat.getColor(this, R.color.red),
+                ContextCompat.getColor(this, R.color.yellow),
+                ContextCompat.getColor(this, R.color.blue)
         };
         progress.setColors(colors);
 
