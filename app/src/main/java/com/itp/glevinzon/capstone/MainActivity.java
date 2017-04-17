@@ -1,6 +1,7 @@
 package com.itp.glevinzon.capstone;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -40,7 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements PaginationAdapterCallback, OnActionClickedListener {
+public class MainActivity extends AppCompatActivity implements PaginationAdapterCallback, OnActionClickedListener, ItemClickListener  {
     private static final String TAG = "MainActivity";
 
     PaginationAdapter adapter;
@@ -67,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
     private Menu collapsedMenu;
     private boolean appBarExpanded = true;
+
+    private List<Datum> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
         rv.setAdapter(adapter);
 
+        adapter.setClickListener(this);
+
         rv.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
             protected void loadMoreItems() {
@@ -185,6 +190,31 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     }
 
     @Override
+    public void onClick(View view, int position) {
+        final Datum result = data.get(position);
+        Intent i = new Intent(this, HomeActivity.class);
+        i.putExtra("name", result.getName());
+        i.putExtra("note", result.getNote());
+        i.putExtra("audioUrl", result.getAudioUrl());
+        Log.d(TAG, result.getName());
+        startActivity(i);
+    }
+
+    @Override
+    public void onActionClicked(int id) {
+        switch (id) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (collapsedMenu != null
                 && (!appBarExpanded || collapsedMenu.size() != 1)) {
@@ -221,20 +251,6 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onActionClicked(int id) {
-        switch (id) {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            default:
-                break;
-        }
-    }
-
     private void loadFirstPage() {
         Log.d(TAG, "loadFirstPage: ");
 
@@ -248,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
                 hideErrorView();
 
-                List<Datum> data = fetchResults(response);
+                data = fetchResults(response);
                 progressBar.setVisibility(View.GONE);
                 adapter.addAll(data);
 
@@ -290,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
                 adapter.removeLoadingFooter();
                 isLoading = false;
 
-                List<Datum> data = fetchResults(response);
+                data = fetchResults(response);
                 adapter.addAll(data);
 
                 if (currentPage != TOTAL_PAGES) adapter.addLoadingFooter();

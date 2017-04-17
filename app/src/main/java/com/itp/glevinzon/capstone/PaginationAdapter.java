@@ -40,6 +40,8 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private List<Datum> equationResults;
     private Context context;
 
+    private ItemClickListener clickListener;
+
     private boolean isLoadingAdded = false;
 
     private boolean retryPageLoad = false;
@@ -62,6 +64,13 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.equationResults = equationResults;
     }
 
+//
+//    public PaginationAdapter(List<Datum> equationResults, int rowLayout, Context context) {
+//        this.equationResults = equationResults;
+//        this.rowLayout = rowLayout;
+//        this.context = context;
+//    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
@@ -83,28 +92,28 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         RecyclerView.ViewHolder viewHolder;
         View v1 = inflater.inflate(R.layout.item_list, parent, false);
-        viewHolder = new MovieVH(v1);
+        viewHolder = new ViewHolder(v1);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        Datum data = equationResults.get(position); // Movie
+        Datum data = equationResults.get(position);
 
         switch (getItemViewType(position)) {
             case ITEM:
-                final MovieVH movieVH = (MovieVH) holder;
+                final ViewHolder viewHolder = (ViewHolder) holder;
 
-                movieVH.mMovieTitle.setText(data.getName());
+                viewHolder.mMovieTitle.setText(data.getName());
 
 
-                movieVH.mYear.setText(
+                viewHolder.mYear.setText(
                         data.getCreatedAt().substring(0, 4)  // we want the year only
                                 + " | "
                                 + "EN"
                 );
-                movieVH.mMovieDesc.setText(data.getNote());
+                viewHolder.mMovieDesc.setText(data.getNote());
 
                 /**
                  * Using Glide to handle image loading.
@@ -118,21 +127,21 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             @Override
                             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                                 // TODO: 08/11/16 handle failure
-                                movieVH.mProgress.setVisibility(View.GONE);
+                                viewHolder.mProgress.setVisibility(View.GONE);
                                 return false;
                             }
 
                             @Override
                             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                                 // image ready, hide progress now
-                                movieVH.mProgress.setVisibility(View.GONE);
+                                viewHolder.mProgress.setVisibility(View.GONE);
                                 return false;   // return false if you want Glide to handle everything else.
                             }
                         })
                         .diskCacheStrategy(DiskCacheStrategy.ALL)   // cache both original & resized image
 //                        .centerCrop()
                         .crossFade()
-                        .into(movieVH.mPosterImg);
+                        .into(viewHolder.mPosterImg);
 
                 break;
 
@@ -159,6 +168,10 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
         return equationResults == null ? 0 : equationResults.size();
+    }
+
+    public void setClickListener(ItemClickListener itemClickListener) {
+        this.clickListener = itemClickListener;
     }
 
     @Override
@@ -246,14 +259,14 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     /**
      * Main list's content ViewHolder
      */
-    protected class MovieVH extends RecyclerView.ViewHolder {
+    protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mMovieTitle;
         private TextView mMovieDesc;
         private TextView mYear; // displays "year | language"
         private ImageView mPosterImg;
         private ProgressBar mProgress;
 
-        public MovieVH(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
 
             mMovieTitle = (TextView) itemView.findViewById(R.id.movie_title);
@@ -263,6 +276,13 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
 
             mPosterImg.setBackgroundColor(getMatColor("500"));
+            itemView.setTag(itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (clickListener != null) clickListener.onClick(view, getAdapterPosition());
         }
     }
 
