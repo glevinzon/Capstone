@@ -84,6 +84,24 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //speech
+        progress = (SpeechProgressView) findViewById(R.id.progress);
+        speechLayout = (LinearLayout) findViewById(R.id.speech_layout);;
+
+        int[] colors = {
+                ContextCompat.getColor(this, R.color.pink),
+                ContextCompat.getColor(this, R.color.black_trans80),
+                ContextCompat.getColor(this, R.color.red),
+                ContextCompat.getColor(this, R.color.yellow),
+                ContextCompat.getColor(this, R.color.blue)
+        };
+        progress.setColors(colors);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(view -> onButtonClick());
+
+        
         //pagination
         rv = (RecyclerView) findViewById(R.id.home_recycler);
         progressBar = (ProgressBar) findViewById(R.id.home_progress);
@@ -125,6 +143,19 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             public boolean isLoading() {
                 return isLoading;
             }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                switch (newState) {
+                    case RecyclerView.SCROLL_STATE_IDLE:
+                        fab.show();
+                        break;
+                    default:
+                        fab.hide();
+                        break;
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
         });
 
         equationService = CapstoneApi.getClient().create(CapstoneService.class);
@@ -133,23 +164,6 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         btnRetry.setOnClickListener(view -> loadFirstPage());
 
-        //speech
-        progress = (SpeechProgressView) findViewById(R.id.progress);
-        speechLayout = (LinearLayout) findViewById(R.id.speech_layout);;
-
-        int[] colors = {
-                ContextCompat.getColor(this, R.color.pink),
-                ContextCompat.getColor(this, R.color.black_trans80),
-                ContextCompat.getColor(this, R.color.red),
-                ContextCompat.getColor(this, R.color.yellow),
-                ContextCompat.getColor(this, R.color.blue)
-        };
-        progress.setColors(colors);
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> onButtonClick());
-
-        //onClick
 }
 
     @Override
