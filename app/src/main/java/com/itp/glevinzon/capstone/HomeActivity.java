@@ -3,6 +3,7 @@ package com.itp.glevinzon.capstone;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -49,7 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener {
+public class HomeActivity extends AppCompatActivity implements PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener, ItemClickListener {
     private SpeechProgressView progress;
     private LinearLayout speechLayout;
     private FloatingActionButton fab;
@@ -75,6 +76,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     private CapstoneService equationService;
 
+    private List<Datum> data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +92,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         txtError = (TextView) findViewById(R.id.home_error_txt_cause);
 
         adapter = new PaginationAdapter(this);
+
+        adapter.setClickListener(this);
 
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(linearLayoutManager);
@@ -143,7 +148,20 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(view -> onButtonClick());
+
+        //onClick
 }
+
+    @Override
+    public void onClick(View view, int position) {
+        final Datum result = data.get(position);
+        Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("name", result.getName());
+        i.putExtra("note", result.getNote());
+        i.putExtra("audioUrl", result.getAudioUrl());
+        Log.d(TAG, result.getName());
+        startActivity(i);
+    }
 
     private void loadFirstPage() {
         Log.d(TAG, "loadFirstPage: ");
@@ -158,7 +176,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
                 hideErrorView();
 
-                List<Datum> data = fetchResults(response);
+                data = fetchResults(response);
                 progressBar.setVisibility(View.GONE);
                 adapter.addAll(data);
 
@@ -200,7 +218,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 adapter.removeLoadingFooter();
                 isLoading = false;
 
-                List<Datum> data = fetchResults(response);
+                data = fetchResults(response);
                 adapter.addAll(data);
 
                 if (currentPage != TOTAL_PAGES) adapter.addLoadingFooter();
