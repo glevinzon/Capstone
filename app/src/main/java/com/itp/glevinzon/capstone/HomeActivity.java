@@ -78,13 +78,16 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     private List<Datum> data;
 
+    private String keyword = "";
+    private Boolean isSearch = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        isSearch = false;
         //speech
         progress = (SpeechProgressView) findViewById(R.id.progress);
         speechLayout = (LinearLayout) findViewById(R.id.speech_layout);;
@@ -101,7 +104,6 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(view -> onButtonClick());
 
-        
         //pagination
         rv = (RecyclerView) findViewById(R.id.home_recycler);
         progressBar = (ProgressBar) findViewById(R.id.home_progress);
@@ -126,7 +128,11 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 isLoading = true;
                 currentPage += 1;
 
-                loadNextPage();
+                if(isSearch == true) {
+                    loadNextSearchResultPage();
+                } else {
+                    loadNextPage();
+                }
             }
 
             @Override
@@ -246,6 +252,29 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             }
         });
     }
+    private void loadNextSearchResultPage() {
+        Log.d(TAG, "loadNextPage: " + currentPage);
+
+        callSearchEquationsApi().enqueue(new Callback<Equations>() {
+            @Override
+            public void onResponse(Call<Equations> call, Response<Equations> response) {
+                adapter.removeLoadingFooter();
+                isLoading = false;
+
+                data = fetchResults(response);
+                adapter.addAll(data);
+
+                if (currentPage != TOTAL_PAGES) adapter.addLoadingFooter();
+                else isLastPage = true;
+            }
+
+            @Override
+            public void onFailure(Call<Equations> call, Throwable t) {
+                t.printStackTrace();
+                adapter.showRetry(true, fetchErrorMessage(t));
+            }
+        });
+    }
 
     /**
      * Performs a Retrofit call to the top rated movies API.
@@ -260,6 +289,41 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 currentPage,
                 COUNT
         );
+    }
+
+    private Call<Equations> callSearchEquationsApi() {
+        int COUNT = 15;
+        Log.d(TAG, keyword + currentPage);
+        return equationService.search(
+                keyword,
+                currentPage,
+                COUNT
+        );
+    }
+
+    private void loadSearchResult() {
+        Log.d(TAG, "loadSearchResult: " + currentPage);
+        currentPage = PAGE_START;
+        callSearchEquationsApi().enqueue(new Callback<Equations>() {
+            @Override
+            public void onResponse(Call<Equations> call, Response<Equations> response) {
+                adapter.removeLoadingFooter();
+                isLoading = false;
+
+                data = fetchResults(response);
+                adapter.clear();
+                adapter.addAll(data);
+
+                if (currentPage != TOTAL_PAGES) adapter.addLoadingFooter();
+                else isLastPage = true;
+            }
+
+            @Override
+            public void onFailure(Call<Equations> call, Throwable t) {
+                t.printStackTrace();
+                adapter.showRetry(true, fetchErrorMessage(t));
+            }
+        });
     }
 
     @Override
@@ -329,16 +393,19 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     @Override
     public boolean onQueryTextChange(String query) {
-//        final List<WordModel> filteredModelList = filter(mModels, query);
-//        mAdapter.edit()
-//                .replaceAll(filteredModelList)
-//                .commit();
-        return false;
+        keyword = query;
+        if(query == "") {
+            isSearch = false;
+            loadFirstPage();
+        }
+        return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return false;
+        isSearch = true;
+        loadSearchResult();
+        return true;
     }
 
     @Override

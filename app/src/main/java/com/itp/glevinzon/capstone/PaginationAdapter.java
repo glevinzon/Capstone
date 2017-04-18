@@ -34,7 +34,7 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private static final int ITEM = 0;
     private static final int LOADING = 1;
-    private static final String BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/m4a-file-format-variant.png";
+    private static final String BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/mp3.png";
     private static final String TAG = "ADAPTER";
 
     private List<Datum> equationResults;

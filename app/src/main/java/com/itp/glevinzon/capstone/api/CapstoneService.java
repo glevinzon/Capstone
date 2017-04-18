@@ -26,4 +26,11 @@ public interface CapstoneService {
     @POST("tokens")
     @FormUrlEncoded
     Call<Token> saveToken(@Field("token") String token);
+
+    @GET("search")
+    Call<Equations> search(
+            @Query("keyword") String keyword,
+            @Query("page") int page,
+            @Query("count") int count
+    );
 }
