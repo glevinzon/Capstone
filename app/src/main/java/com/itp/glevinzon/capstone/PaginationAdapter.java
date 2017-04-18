@@ -275,7 +275,7 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             mPosterImg = (ImageView) itemView.findViewById(R.id.movie_poster);
             mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
 
-            mPosterImg.setBackgroundColor(getMatColor("500"));
+            mPosterImg.setBackgroundColor(getMatColor("A100"));
             itemView.setTag(itemView);
             itemView.setOnClickListener(this);
         }

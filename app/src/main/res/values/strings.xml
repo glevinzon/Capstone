@@ -47,4 +47,5 @@
     <string name="enable_google_voice_typing">Please enable Google Voice Typing to use speech recognition!</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="Capstone">Capstone</string>
 </resources>
