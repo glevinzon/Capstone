@@ -75,6 +75,12 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            String name = extras.getString("name");
+            String note = extras.getString("note");
+            String audioUrl = extras.getString("audioUrl");
+        }
 
         final InteractivePlayerView mInteractivePlayerView = (InteractivePlayerView) findViewById(R.id.interactivePlayerView);
         mInteractivePlayerView.setMax(114);
