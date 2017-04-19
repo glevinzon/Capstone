@@ -175,8 +175,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     public void onClick(View view, int position) {
         final Datum result = data.get(position);
         Intent i = new Intent(this, MainActivity.class);
-        i.putExtra("name", result.getName());
-        i.putExtra("note", result.getNote());
+//        i.putExtra("name", result.getName());
+//        i.putExtra("note", result.getNote());
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getName());
         Speech.getInstance().unregisterDelegate();

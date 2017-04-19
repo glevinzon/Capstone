@@ -1,11 +1,14 @@
 package com.itp.glevinzon.capstone;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -71,16 +74,24 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
     private List<Datum> data;
 
+    //mediaplayer
+    private MediaPlayerService player;
+    boolean serviceBound = false;
+    private String audioUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
-            String name = extras.getString("name");
-            String note = extras.getString("note");
-            String audioUrl = extras.getString("audioUrl");
+//            String name = extras.getString("name");
+//            String note = extras.getString("note");
+            audioUrl = extras.getString("audioUrl");
+            Log.d(TAG, audioUrl + "Glevinzon was here!");
         }
+
+        playAudio("http://" + audioUrl);
 
         final InteractivePlayerView mInteractivePlayerView = (InteractivePlayerView) findViewById(R.id.interactivePlayerView);
         mInteractivePlayerView.setMax(114);
@@ -393,5 +404,38 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    //mediaplayer
+
+    //Binding this Client to the AudioPlayer Service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+            player = binder.getService();
+            serviceBound = true;
+
+            Toast.makeText(MainActivity.this, "Service Bound", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
+
+    private void playAudio(String media) {
+        //Check is service is active
+        if (!serviceBound) {
+            Intent playerIntent = new Intent(this, MediaPlayerService.class);
+            playerIntent.putExtra("media", media);
+            startService(playerIntent);
+            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            //Service is active
+            //Send media with BroadcastReceiver
+        }
     }
 }
