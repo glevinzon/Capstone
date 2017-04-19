@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -180,6 +179,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         i.putExtra("note", result.getNote());
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getName());
+        Speech.getInstance().unregisterDelegate();
         startActivity(i);
     }
 
@@ -410,6 +410,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         Speech.getInstance().unregisterDelegate();
     }
 
