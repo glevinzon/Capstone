@@ -50,24 +50,20 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity implements PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener, ItemClickListener {
-    private SpeechProgressView progress;
-    private LinearLayout speechLayout;
-    private FloatingActionButton fab;
-    private SearchView searchView;
-
     //pagination
     private static final String TAG = "HomeActivity";
-
+    private static final int PAGE_START = 1;
     PaginationAdapter adapter;
     LinearLayoutManager linearLayoutManager;
-
     RecyclerView rv;
     ProgressBar progressBar;
     LinearLayout errorLayout;
     Button btnRetry;
     TextView txtError;
-
-    private static final int PAGE_START = 1;
+    private SpeechProgressView progress;
+    private LinearLayout speechLayout;
+    private FloatingActionButton fab;
+    private SearchView searchView;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int TOTAL_PAGES = 1;
@@ -89,7 +85,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         isSearch = false;
         //speech
         progress = (SpeechProgressView) findViewById(R.id.progress);
-        speechLayout = (LinearLayout) findViewById(R.id.speech_layout);;
+        speechLayout = (LinearLayout) findViewById(R.id.speech_layout);
+        ;
 
         int[] colors = {
                 ContextCompat.getColor(this, R.color.pink),
@@ -127,7 +124,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 isLoading = true;
                 currentPage += 1;
 
-                if(isSearch == true) {
+                if (isSearch == true) {
                     loadNextSearchResultPage();
                 } else {
                     loadNextPage();
@@ -169,7 +166,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         btnRetry.setOnClickListener(view -> loadFirstPage());
 
-}
+    }
 
     @Override
     public void onClick(View view, int position) {
@@ -197,6 +194,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 hideErrorView();
 
                 data = fetchResults(response);
+
+                Log.d(TAG, data + " Glevinzon");
                 progressBar.setVisibility(View.GONE);
                 adapter.addAll(data);
 
@@ -239,6 +238,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 isLoading = false;
 
                 data = fetchResults(response);
+                Log.d(TAG, data + " Dapal");
                 adapter.addAll(data);
 
                 if (currentPage != TOTAL_PAGES) adapter.addLoadingFooter();
@@ -252,6 +252,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             }
         });
     }
+
     private void loadNextSearchResultPage() {
         Log.d(TAG, "loadNextPage: " + currentPage);
 
@@ -283,7 +284,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
      * by @{@link PaginationScrollListener} to load next page.
      */
     private Call<Equations> callEquationsApi() {
-        int COUNT = 15;
+        int COUNT = 100;
         return equationService.getEquations(
                 "paginate",
                 currentPage,
@@ -292,7 +293,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     }
 
     private Call<Equations> callSearchEquationsApi() {
-        int COUNT = 15;
+        int COUNT = 100;
         Log.d(TAG, keyword + currentPage);
         return equationService.search(
                 keyword,
@@ -394,7 +395,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     @Override
     public boolean onQueryTextChange(String query) {
         keyword = query;
-        if(query == "") {
+        if (query == "") {
             isSearch = false;
             loadFirstPage();
         }
@@ -505,7 +506,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     private void showSpeechNotSupportedDialog() {
         DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
-            switch (which){
+            switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
                     SpeechUtil.redirectUserToGoogleAppOnPlayStore(HomeActivity.this);
                     break;

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,9 +35,8 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private static final int ITEM = 0;
     private static final int LOADING = 1;
-    private static final String BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/mp3.png";
     private static final String TAG = "ADAPTER";
-
+    private String BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/not-applicable.png";
     private List<Datum> equationResults;
     private Context context;
 
@@ -100,6 +100,31 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         Datum data = equationResults.get(position);
+        if (data.getAudioUrl() != null) {
+            try {
+                String s = data.getAudioUrl();
+                String file = s.substring(s.lastIndexOf("."));
+                String extension = file.substring(file.indexOf("."));
+
+                if (extension.equals(".m4a")) {
+                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-mov.png";
+                } else if (extension.equals(".3gp")) {
+                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-avi.png";
+                } else if (extension.equals(".mp4")) {
+                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-mpg.png";
+                } else if (extension.equals(".mp3")) {
+                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-mp3.png";
+                } else if (extension.equals(".wav") ) {
+                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-wav.png";
+                } else if (extension.equals(".mkv")) {
+                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-wma.png";
+                } else if (extension.equals(".ogg") ) {
+                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-wav.png";
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "Glevinzon Dapal" + e.getMessage());
+            }
+        }
 
         switch (getItemViewType(position)) {
             case ITEM:
@@ -120,6 +145,7 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                  * Learn more about Glide here:
                  * <a href="http://blog.grafixartist.com/image-gallery-app-android-studio-1-4-glide/" />
                  */
+                Log.d(TAG, "Glide " + BASE_URL_IMG);
                 Glide
                         .with(context)
                         .load(BASE_URL_IMG)
@@ -142,11 +168,11 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //                        .centerCrop()
                         .crossFade()
                         .into(viewHolder.mPosterImg);
-
+                BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/not-applicable.png";
                 break;
 
             case LOADING:
-              LoadingVH loadingVH = (LoadingVH) holder;
+                LoadingVH loadingVH = (LoadingVH) holder;
 
                 if (retryPageLoad) {
                     loadingVH.mErrorLayout.setVisibility(View.VISIBLE);
@@ -256,10 +282,23 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
    _________________________________________________________________________________________________
     */
 
+    private int getMatColor(String typeColor) {
+        int returnColor = Color.BLACK;
+        int arrayId = this.context.getResources().getIdentifier("mdcolor_" + typeColor, "array", this.context.getPackageName());
+
+        if (arrayId != 0) {
+            TypedArray colors = this.context.getResources().obtainTypedArray(arrayId);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.BLACK);
+            colors.recycle();
+        }
+        return returnColor;
+    }
+
     /**
      * Main list's content ViewHolder
      */
-    protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mMovieTitle;
         private TextView mMovieDesc;
         private TextView mYear; // displays "year | language"
@@ -285,22 +324,6 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (clickListener != null) clickListener.onClick(view, getAdapterPosition());
         }
     }
-
-    private int getMatColor(String typeColor)
-    {
-        int returnColor = Color.BLACK;
-        int arrayId = this.context.getResources().getIdentifier("mdcolor_" + typeColor, "array", this.context.getPackageName());
-
-        if (arrayId != 0)
-        {
-            TypedArray colors = this.context.getResources().obtainTypedArray(arrayId);
-            int index = (int) (Math.random() * colors.length());
-            returnColor = colors.getColor(index, Color.BLACK);
-            colors.recycle();
-        }
-        return returnColor;
-    }
-
 
     protected class LoadingVH extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ProgressBar mProgressBar;

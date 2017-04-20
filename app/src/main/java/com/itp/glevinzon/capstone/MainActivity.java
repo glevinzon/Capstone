@@ -44,7 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements PaginationAdapterCallback, OnActionClickedListener, ItemClickListener  {
+public class MainActivity extends AppCompatActivity implements PaginationAdapterCallback, OnActionClickedListener, ItemClickListener {
     private static final String TAG = "MainActivity";
 
     PaginationAdapter adapter;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int TOTAL_PAGES = 1;
-    private int COUNT = 15;
+    private int COUNT = 100;
     private int currentPage = PAGE_START;
 
     private CapstoneService equationService;
@@ -84,14 +84,13 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
+        if (extras != null) {
 //            String name = extras.getString("name");
 //            String note = extras.getString("note");
             audioUrl = extras.getString("audioUrl");
             Log.d(TAG, audioUrl + "Glevinzon was here!");
         }
 
-        playAudio("http://" + audioUrl);
 
         final InteractivePlayerView mInteractivePlayerView = (InteractivePlayerView) findViewById(R.id.interactivePlayerView);
         mInteractivePlayerView.setMax(114);
@@ -103,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
             @Override
             public void onClick(View view) {
                 if (!mInteractivePlayerView.isPlaying()) {
+                    playAudio("http://" + audioUrl);
                     mInteractivePlayerView.start();
                     fab.setImageResource(R.drawable.ic_action_pause);
                 } else {
@@ -282,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
                 hideErrorView();
 
                 data = fetchResults(response);
+                Log.d(TAG, data + " Glevinzon");
                 progressBar.setVisibility(View.GONE);
                 adapter.addAll(data);
 
