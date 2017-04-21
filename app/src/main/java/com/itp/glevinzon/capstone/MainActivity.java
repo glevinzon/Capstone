@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
             @Override
             public void onClick(View view) {
                 if (!mInteractivePlayerView.isPlaying()) {
-                    playAudio("http://" + audioUrl);
+                    playAudio(audioUrl);
                     mInteractivePlayerView.start();
                     fab.setImageResource(R.drawable.ic_action_pause);
                 } else {
