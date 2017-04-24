@@ -1,14 +1,12 @@
 package com.itp.glevinzon.capstone;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -58,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
     private static final int PAGE_START = 1;
     private boolean isLoading = false;
-    private boolean isLastPage = false;
+    private boolean isLastPage = true;
     private int TOTAL_PAGES = 1;
     private int COUNT = 100;
     private int currentPage = PAGE_START;
@@ -74,10 +72,14 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
     private List<Datum> data;
 
-    //mediaplayer
-    private MediaPlayerService player;
-    boolean serviceBound = false;
     private String audioUrl;
+
+    private String eqId = "999";
+
+    //media player
+
+    MediaPlayer song;
+    public static int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +89,9 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
         if (extras != null) {
 //            String name = extras.getString("name");
 //            String note = extras.getString("note");
+            eqId = extras.getString("eqId");
             audioUrl = extras.getString("audioUrl");
-            Log.d(TAG, audioUrl + "Glevinzon was here!");
+            Log.d(TAG, eqId + "Glevinzon was here!");
         }
 
 
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
             @Override
             public void onClick(View view) {
                 if (!mInteractivePlayerView.isPlaying()) {
-                    playAudio(audioUrl);
+//                    playAudio(audioUrl);
                     mInteractivePlayerView.start();
                     fab.setImageResource(R.drawable.ic_action_pause);
                 } else {
@@ -159,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
                 isLoading = true;
                 currentPage += 1;
 
-                loadNextPage();
+//                loadNextPage();
             }
 
             @Override
@@ -209,9 +212,9 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     @Override
     public void onClick(View view, int position) {
         final Datum result = data.get(position);
-        Intent i = new Intent(this, HomeActivity.class);
-        i.putExtra("name", result.getName());
-        i.putExtra("note", result.getNote());
+        Intent i = new Intent(this, MainActivity.class);
+//        i.putExtra("name", result.getName());
+        i.putExtra("eqId", result.getId()+"");
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getName());
         startActivity(i);
@@ -288,8 +291,12 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
                 TOTAL_PAGES = fetchLastPage(response);
 
-                if (currentPage <= TOTAL_PAGES) adapter.addLoadingFooter();
-                else isLastPage = true;
+                if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
+                    adapter.addLoadingFooter();
+                } else {
+                    isLastPage = true;
+                    adapter.removeLoadingFooter();
+                }
             }
 
             @Override
@@ -346,16 +353,16 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
      * by @{@link PaginationScrollListener} to load next page.
      */
     private Call<Equations> callEquationsApi() {
-        return equationService.getEquations(
-                "paginate",
-                currentPage,
-                COUNT
+        return equationService.getRelated(
+                eqId,
+                1,
+                999
         );
     }
 
     @Override
     public void retryPageLoad() {
-        loadNextPage();
+//        loadNextPage();
     }
 
     /**
@@ -405,38 +412,5 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
-    }
-
-    //mediaplayer
-
-    //Binding this Client to the AudioPlayer Service
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-            player = binder.getService();
-            serviceBound = true;
-
-            Toast.makeText(MainActivity.this, "Service Bound", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            serviceBound = false;
-        }
-    };
-
-    private void playAudio(String media) {
-        //Check is service is active
-        if (!serviceBound) {
-            Intent playerIntent = new Intent(this, MediaPlayerService.class);
-            playerIntent.putExtra("media", media);
-            startService(playerIntent);
-            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-        } else {
-            //Service is active
-            //Send media with BroadcastReceiver
-        }
     }
 }

@@ -65,7 +65,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     private FloatingActionButton fab;
     private SearchView searchView;
     private boolean isLoading = false;
-    private boolean isLastPage = false;
+    private boolean isLastPage = true;
     private int TOTAL_PAGES = 1;
     private int currentPage = PAGE_START;
 
@@ -123,12 +123,6 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             protected void loadMoreItems() {
                 isLoading = true;
                 currentPage += 1;
-
-                if (isSearch == true) {
-                    loadNextSearchResultPage();
-                } else {
-                    loadNextPage();
-                }
             }
 
             @Override
@@ -174,8 +168,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         Intent i = new Intent(this, MainActivity.class);
 //        i.putExtra("name", result.getName());
 //        i.putExtra("note", result.getNote());
+        i.putExtra("eqId", result.getId()+"");
         i.putExtra("audioUrl", result.getAudioUrl());
-        Log.d(TAG, result.getName());
+        Log.d(TAG, result.getId() + "glevinzon was here");
         Speech.getInstance().unregisterDelegate();
         startActivity(i);
     }
@@ -201,8 +196,12 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
                 TOTAL_PAGES = fetchLastPage(response);
 
-                if (currentPage <= TOTAL_PAGES) adapter.addLoadingFooter();
-                else isLastPage = true;
+                if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
+                    adapter.addLoadingFooter();
+                } else {
+                    isLastPage = true;
+                    adapter.removeLoadingFooter();
+                }
             }
 
             @Override
@@ -241,8 +240,12 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 Log.d(TAG, data + " Dapal");
                 adapter.addAll(data);
 
-                if (currentPage != TOTAL_PAGES) adapter.addLoadingFooter();
-                else isLastPage = true;
+                if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
+                    adapter.addLoadingFooter();
+                } else {
+                    isLastPage = true;
+                    adapter.removeLoadingFooter();
+                }
             }
 
             @Override
@@ -265,8 +268,12 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 data = fetchResults(response);
                 adapter.addAll(data);
 
-                if (currentPage != TOTAL_PAGES) adapter.addLoadingFooter();
-                else isLastPage = true;
+                if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
+                    adapter.addLoadingFooter();
+                } else {
+                    isLastPage = true;
+                    adapter.removeLoadingFooter();
+                }
             }
 
             @Override
@@ -287,8 +294,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         int COUNT = 100;
         return equationService.getEquations(
                 "paginate",
-                currentPage,
-                COUNT
+                1,
+                999
         );
     }
 
@@ -297,8 +304,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         Log.d(TAG, keyword + currentPage);
         return equationService.search(
                 keyword,
-                currentPage,
-                COUNT
+                1,
+                999
         );
     }
 
@@ -315,8 +322,12 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 adapter.clear();
                 adapter.addAll(data);
 
-                if (currentPage != TOTAL_PAGES) adapter.addLoadingFooter();
-                else isLastPage = true;
+                if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
+                    adapter.addLoadingFooter();
+                } else {
+                    isLastPage = true;
+                    adapter.removeLoadingFooter();
+                }
             }
 
             @Override
@@ -329,7 +340,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     @Override
     public void retryPageLoad() {
-        loadNextPage();
+//        loadNextPage();
     }
 
     /**
@@ -394,11 +405,11 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     @Override
     public boolean onQueryTextChange(String query) {
-        keyword = query;
-        if (query == "") {
-            isSearch = false;
-            loadFirstPage();
-        }
+//        keyword = query;
+//        if (query == "") {
+//            isSearch = false;
+//            loadFirstPage();
+//        }
         return true;
     }
 

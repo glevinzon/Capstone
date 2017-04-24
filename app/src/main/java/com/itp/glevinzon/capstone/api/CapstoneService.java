@@ -33,4 +33,10 @@ public interface CapstoneService {
             @Query("page") int page,
             @Query("count") int count
     );
+    @GET("equations/related")
+    Call<Equations> getRelated(
+            @Query("eqId")  String eqId,
+            @Query("page") int page,
+            @Query("count") int count
+    );
 }
