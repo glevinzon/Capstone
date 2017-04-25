@@ -166,8 +166,6 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     public void onClick(View view, int position) {
         final Datum result = data.get(position);
         Intent i = new Intent(this, MainActivity.class);
-//        i.putExtra("name", result.getName());
-//        i.putExtra("note", result.getNote());
         i.putExtra("eqId", result.getId()+"");
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getId() + "glevinzon was here");
@@ -291,21 +289,21 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
      * by @{@link PaginationScrollListener} to load next page.
      */
     private Call<Equations> callEquationsApi() {
-        int COUNT = 100;
+        int COUNT = 999;
         return equationService.getEquations(
                 "paginate",
                 1,
-                999
+                COUNT
         );
     }
 
     private Call<Equations> callSearchEquationsApi() {
-        int COUNT = 100;
+        int COUNT = 999;
         Log.d(TAG, keyword + currentPage);
         return equationService.search(
                 keyword,
                 1,
-                999
+                COUNT
         );
     }
 
@@ -318,16 +316,31 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 adapter.removeLoadingFooter();
                 isLoading = false;
 
-                data = fetchResults(response);
-                adapter.clear();
-                adapter.addAll(data);
+//                adapter.clear();
+//                btnRetry.setVisibility(View.VISIBLE);
+//                hideErrorView();
 
-                if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
-                    adapter.addLoadingFooter();
+                loadFirstPage();
+
+                data = fetchResults(response);
+
+                if(!data.isEmpty()){
+                    adapter.clear();
+                    adapter.addAll(data);
+
+                    if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
+                        adapter.addLoadingFooter();
+                    } else {
+                        isLastPage = true;
+                        adapter.removeLoadingFooter();
+                    }
                 } else {
-                    isLastPage = true;
-                    adapter.removeLoadingFooter();
+                    adapter.clear();
+                    btnRetry.setVisibility(View.GONE);
+                    showErrorView(new Throwable(keyword));
                 }
+
+
             }
 
             @Override
@@ -368,6 +381,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             errorMsg = getResources().getString(R.string.error_msg_no_internet);
         } else if (throwable instanceof TimeoutException) {
             errorMsg = getResources().getString(R.string.error_msg_timeout);
+        } else if (data.isEmpty()) {
+            errorMsg = getResources().getString(R.string.error_msg_no_data) + " with keyword `"+throwable.getMessage()+"`";
         }
 
         return errorMsg;
@@ -405,18 +420,19 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     @Override
     public boolean onQueryTextChange(String query) {
-//        keyword = query;
-//        if (query == "") {
-//            isSearch = false;
-//            loadFirstPage();
-//        }
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        isSearch = true;
-        loadSearchResult();
+        keyword = query;
+        if (query == "") {
+            isSearch = false;
+            loadFirstPage();
+        } else {
+            isSearch = true;
+            loadSearchResult();
+        }
         return true;
     }
 
@@ -544,5 +560,4 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 })
                 .show();
     }
-
 }

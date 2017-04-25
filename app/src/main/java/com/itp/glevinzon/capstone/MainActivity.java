@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -33,7 +34,9 @@ import com.itp.glevinzon.capstone.models.Equations;
 import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
 import com.itp.glevinzon.capstone.utils.PaginationScrollListener;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import co.mobiwise.library.InteractivePlayerView;
@@ -42,7 +45,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements PaginationAdapterCallback, OnActionClickedListener, ItemClickListener {
+public class MainActivity extends AppCompatActivity implements PaginationAdapterCallback, OnActionClickedListener, ItemClickListener, MediaPlayer.OnCompletionListener {
     private static final String TAG = "MainActivity";
 
     PaginationAdapter adapter;
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     private boolean isLoading = false;
     private boolean isLastPage = true;
     private int TOTAL_PAGES = 1;
-    private int COUNT = 100;
+    private int COUNT = 999;
     private int currentPage = PAGE_START;
 
     private CapstoneService equationService;
@@ -72,14 +75,15 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 
     private List<Datum> data;
 
-    private String audioUrl;
+    private String audioUrl = "";
 
     private String eqId = "999";
 
-    //media player
+    MediaPlayer mediaPlayer = null;
+    private int duration = 1;
 
-    MediaPlayer song;
-    public static int position = 0;
+    private FloatingActionButton fab;
+    private InteractivePlayerView mInteractivePlayerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,25 +95,46 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
 //            String note = extras.getString("note");
             eqId = extras.getString("eqId");
             audioUrl = extras.getString("audioUrl");
-            Log.d(TAG, eqId + "Glevinzon was here!");
         }
+        Toast.makeText(this, "Please wait a while to process audio.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Source: " + audioUrl, Toast.LENGTH_SHORT).show();
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(this);
+        mediaPlayer.reset();
 
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try {
+            mediaPlayer.setDataSource(audioUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, e.getMessage());
+        }
+        mediaPlayer.setOnPreparedListener(mp -> {
+            int totalDuration = mp.getDuration();
+            String s = String.format("%s", TimeUnit.MILLISECONDS.toSeconds(totalDuration));
+            duration = Integer.parseInt(s);
+            Log.d(TAG, "GLEVINZON WAS HERE! : " + duration);
+            Toast.makeText(this, "Audio is ready. Press the play button.", Toast.LENGTH_SHORT).show();
+        });
+        mediaPlayer.prepareAsync();
 
-        final InteractivePlayerView mInteractivePlayerView = (InteractivePlayerView) findViewById(R.id.interactivePlayerView);
-        mInteractivePlayerView.setMax(114);
-        mInteractivePlayerView.setProgress(50);
+        mInteractivePlayerView = (InteractivePlayerView) findViewById(R.id.interactivePlayerView);
+        mInteractivePlayerView.setMax(duration);
+        mInteractivePlayerView.setProgress(0);
         mInteractivePlayerView.setOnActionClickedListener(this);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.control);
+        fab = (FloatingActionButton) findViewById(R.id.control);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!mInteractivePlayerView.isPlaying()) {
-//                    playAudio(audioUrl);
+                    mediaPlayer.start();
+                    mInteractivePlayerView.setMax(duration);
                     mInteractivePlayerView.start();
                     fab.setImageResource(R.drawable.ic_action_pause);
                 } else {
                     mInteractivePlayerView.stop();
+                    mediaPlayer.pause();
                     fab.setImageResource(R.drawable.ic_action_play);
                 }
             }
@@ -210,6 +235,12 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) mediaPlayer.release();
+    }
+
+    @Override
     public void onClick(View view, int position) {
         final Datum result = data.get(position);
         Intent i = new Intent(this, MainActivity.class);
@@ -228,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
             case 2:
                 break;
             case 3:
+                mediaPlayer.isLooping();
                 break;
             default:
                 break;
@@ -265,7 +297,17 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
                 return true;
         }
         if (item.getTitle() == "Add") {
-            Toast.makeText(this, "clicked add", Toast.LENGTH_SHORT).show();
+            if (!mInteractivePlayerView.isPlaying()) {
+                mediaPlayer.start();
+                mInteractivePlayerView.setMax(duration);
+                mInteractivePlayerView.start();
+                fab.setImageResource(R.drawable.ic_action_pause);
+            } else {
+                mInteractivePlayerView.stop();
+                mediaPlayer.pause();
+                fab.setImageResource(R.drawable.ic_action_play);
+            }
+//            Toast.makeText(this, "clicked add", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -356,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
         return equationService.getRelated(
                 eqId,
                 1,
-                999
+                COUNT
         );
     }
 
@@ -413,4 +455,11 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        //Invoked when playback of a media source has completed.
+        fab.setImageResource(R.drawable.ic_action_play);
+    }
+
 }

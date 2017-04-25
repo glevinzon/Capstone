@@ -193,8 +193,11 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
+        Log.d(TAG, "GLEVINZON WAS HERE : " + equationResults);
+
         return equationResults == null ? 0 : equationResults.size();
     }
+
 
     public void setClickListener(ItemClickListener itemClickListener) {
         this.clickListener = itemClickListener;
