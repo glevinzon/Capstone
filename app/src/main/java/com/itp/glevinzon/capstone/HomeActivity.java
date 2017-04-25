@@ -170,7 +170,11 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getId() + "glevinzon was here");
         Speech.getInstance().unregisterDelegate();
-        startActivity(i);
+        if(result.getAudioUrl() != null) {
+            startActivity(i);
+        } else {
+            Toast.makeText(this, R.string.no_audio, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void loadFirstPage() {

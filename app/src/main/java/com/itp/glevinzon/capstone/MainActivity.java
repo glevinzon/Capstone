@@ -237,7 +237,11 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mediaPlayer != null) mediaPlayer.release();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+
     }
 
     @Override
