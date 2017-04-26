@@ -183,7 +183,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     @Override
     public void onItemLongPress(View childView, int position) {
         final Datum result = data.get(position);
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(this, UploadActivity.class);
         i.putExtra("eqId", result.getId()+"");
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getId() + "glevinzon was here");
