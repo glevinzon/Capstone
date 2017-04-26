@@ -49,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener, ItemClickListener {
+public class HomeActivity extends AppCompatActivity implements PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener, RecyclerItemClickListener.OnItemClickListener {
     //pagination
     private static final String TAG = "HomeActivity";
     private static final int PAGE_START = 1;
@@ -102,6 +102,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         //pagination
         rv = (RecyclerView) findViewById(R.id.home_recycler);
+
+        rv.addOnItemTouchListener(new RecyclerItemClickListener(this, this));
+
         progressBar = (ProgressBar) findViewById(R.id.home_progress);
         errorLayout = (LinearLayout) findViewById(R.id.home_error_layout);
         btnRetry = (Button) findViewById(R.id.home_error_btn_retry);
@@ -109,7 +112,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         adapter = new PaginationAdapter(this);
 
-        adapter.setClickListener(this);
+//        adapter.setClickListener(this);
 
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rv.setLayoutManager(linearLayoutManager);
@@ -163,7 +166,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     }
 
     @Override
-    public void onClick(View view, int position) {
+    public void onItemClick(View childView, int position) {
         final Datum result = data.get(position);
         Intent i = new Intent(this, MainActivity.class);
         i.putExtra("eqId", result.getId()+"");
@@ -176,6 +179,36 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             Toast.makeText(this, R.string.no_audio, Toast.LENGTH_LONG).show();
         }
     }
+
+    @Override
+    public void onItemLongPress(View childView, int position) {
+        final Datum result = data.get(position);
+        Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("eqId", result.getId()+"");
+        i.putExtra("audioUrl", result.getAudioUrl());
+        Log.d(TAG, result.getId() + "glevinzon was here");
+        Speech.getInstance().unregisterDelegate();
+        if(result.getAudioUrl() != null) {
+            startActivity(i);
+        } else {
+            Toast.makeText(this, R.string.no_audio, Toast.LENGTH_LONG).show();
+        }
+    }
+
+//    @Override
+//    public void onClick(View view, int position) {
+//        final Datum result = data.get(position);
+//        Intent i = new Intent(this, MainActivity.class);
+//        i.putExtra("eqId", result.getId()+"");
+//        i.putExtra("audioUrl", result.getAudioUrl());
+//        Log.d(TAG, result.getId() + "glevinzon was here");
+//        Speech.getInstance().unregisterDelegate();
+//        if(result.getAudioUrl() != null) {
+//            startActivity(i);
+//        } else {
+//            Toast.makeText(this, R.string.no_audio, Toast.LENGTH_LONG).show();
+//        }
+//    }
 
     private void loadFirstPage() {
         Log.d(TAG, "loadFirstPage: ");
