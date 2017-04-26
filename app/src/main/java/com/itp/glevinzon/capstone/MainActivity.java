@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
         final Datum result = data.get(position);
         Intent i = new Intent(this, MainActivity.class);
 //        i.putExtra("name", result.getName());
-        i.putExtra("eqId", result.getId()+"");
+        i.putExtra("eqId", result.getId() + "");
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getName());
         startActivity(i);

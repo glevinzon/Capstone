@@ -51,4 +51,5 @@
     <string name="no">No</string>
     <string name="Capstone">Capstone</string>
     <string name="title_activity_upload">Upload Audio File</string>
+    <string name="title_activity_record">RecordActivity</string>
 </resources>

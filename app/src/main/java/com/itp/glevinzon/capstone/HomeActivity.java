@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -75,6 +76,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     private String keyword = "";
     private Boolean isSearch = false;
+
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +166,22 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         btnRetry.setOnClickListener(view -> loadFirstPage());
 
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(() -> {
+            // Your code to refresh the list here.
+            // Make sure you call swipeContainer.setRefreshing(false)
+            // once the network request has completed successfully.
+            adapter.clear();
+            loadFirstPage();
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
     }
 
     @Override
@@ -237,6 +256,8 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                     isLastPage = true;
                     adapter.removeLoadingFooter();
                 }
+
+                swipeContainer.setRefreshing(false);
             }
 
             @Override
