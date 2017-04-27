@@ -78,6 +78,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     private Boolean isSearch = false;
 
     private SwipeRefreshLayout swipeContainer;
+    private FloatingActionButton fabRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,11 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(view -> onButtonClick());
+
+        fabRecord = (FloatingActionButton) findViewById(R.id.record_fab);
+        fabRecord.setOnClickListener(view -> {
+            onRecordButtonClick();
+        });
 
         //pagination
         rv = (RecyclerView) findViewById(R.id.home_recycler);
@@ -214,21 +220,6 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         }
     }
 
-//    @Override
-//    public void onClick(View view, int position) {
-//        final Datum result = data.get(position);
-//        Intent i = new Intent(this, MainActivity.class);
-//        i.putExtra("eqId", result.getId()+"");
-//        i.putExtra("audioUrl", result.getAudioUrl());
-//        Log.d(TAG, result.getId() + "glevinzon was here");
-//        Speech.getInstance().unregisterDelegate();
-//        if(result.getAudioUrl() != null) {
-//            startActivity(i);
-//        } else {
-//            Toast.makeText(this, R.string.no_audio, Toast.LENGTH_LONG).show();
-//        }
-//    }
-
     private void loadFirstPage() {
         Log.d(TAG, "loadFirstPage: ");
 
@@ -264,6 +255,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             public void onFailure(Call<Equations> call, Throwable t) {
                 t.printStackTrace();
                 showErrorView(t);
+                swipeContainer.setRefreshing(false);
             }
         });
 
@@ -514,6 +506,10 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                         }
                     });
         }
+    }
+
+    private void onRecordButtonClick() {
+
     }
 
     private void onRecordAudioPermissionGranted() {
