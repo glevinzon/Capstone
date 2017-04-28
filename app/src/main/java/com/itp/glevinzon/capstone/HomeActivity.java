@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -187,7 +188,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        String deviceToken = pref.getString("device_token", null);
+        Log.d(TAG, "Glevinzon was here : " + deviceToken);
     }
 
     @Override
@@ -465,11 +468,20 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(this);
 
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                fabRecord.setVisibility(View.VISIBLE);
+                return true;
+            }
+        });
+
         return true;
     }
 
     @Override
     public boolean onQueryTextChange(String query) {
+        fabRecord.setVisibility(View.GONE);
         return true;
     }
 
@@ -483,6 +495,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             isSearch = true;
             loadSearchResult();
         }
+        fabRecord.setVisibility(View.VISIBLE);
         return true;
     }
 
@@ -505,11 +518,15 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                             Toast.makeText(HomeActivity.this, R.string.permission_required, Toast.LENGTH_LONG).show();
                         }
                     });
+            fabRecord.setVisibility(View.GONE);
+            rv.setVisibility(View.GONE);
         }
     }
 
     private void onRecordButtonClick() {
-
+        fab.setVisibility(View.GONE);
+        rv.setVisibility(View.GONE);
+        searchView.setVisibility(View.GONE);
     }
 
     private void onRecordAudioPermissionGranted() {
@@ -575,6 +592,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         } else {
             Speech.getInstance().say(result);
         }
+
+        fabRecord.setVisibility(View.VISIBLE);
+        rv.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -583,6 +603,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         for (String partial : results) {
             searchView.setQuery(searchView.getQuery() + partial + " ", false);
         }
+        fabRecord.setVisibility(View.GONE);
     }
 
     private void showSpeechNotSupportedDialog() {

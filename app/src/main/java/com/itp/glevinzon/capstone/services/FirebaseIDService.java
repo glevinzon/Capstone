@@ -1,17 +1,13 @@
 package com.itp.glevinzon.capstone.services;
 
+import android.content.SharedPreferences;
 import android.util.Log;
-import android.view.View;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.itp.glevinzon.capstone.api.CapstoneApi;
 import com.itp.glevinzon.capstone.api.CapstoneService;
-import com.itp.glevinzon.capstone.models.Datum;
-import com.itp.glevinzon.capstone.models.Equations;
 import com.itp.glevinzon.capstone.models.Token;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,7 +28,9 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
         Log.d(TAG, "Refreshed token: " + refreshedToken);
         equationService = CapstoneApi.getClient().create(CapstoneService.class);
         // TODO: Implement this method to send any registration to your app's servers.
-        sendRegistrationToServer(refreshedToken);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        String prevToken = pref.getString("device_token", null);
+        sendRegistrationToServer(refreshedToken, prevToken);
     }
 
     /**
@@ -43,11 +41,23 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
      *
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token) {
+    private void sendRegistrationToServer(String token, String prevToken) {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+
+//        editor.putBoolean("key_name", true); // Storing boolean - true/false
+        editor.remove("device_token");
+        editor.putString("device_token", token); // Storing string
+//        editor.putInt("key_name", "int value"); // Storing integer
+//        editor.putFloat("key_name", "float value"); // Storing float
+//        editor.putLong("key_name", "long value"); // Storing long
+//
+        editor.commit(); // commit changes
         // Add custom implementation, as needed.
-        callTokenApi(token).enqueue(new Callback<Token>() {
+        callTokenApi(token, prevToken).enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
+                Log.d(TAG, "Glevinzon was here! : " + response.body().getDeviceToken());
             }
 
             @Override
@@ -57,7 +67,7 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
         });
     }
 
-    private Call<Token> callTokenApi(String token) {
-        return equationService.saveToken(token);
+    private Call<Token> callTokenApi(String token, String prevToken) {
+        return equationService.saveToken(token, prevToken);
     }
 }
