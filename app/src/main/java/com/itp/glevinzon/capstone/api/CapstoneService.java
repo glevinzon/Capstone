@@ -30,7 +30,9 @@ public interface CapstoneService {
 
     @POST("tokens")
     @FormUrlEncoded
-    Call<Token> saveToken(@Field("token") String token, @Field("prevToken") String prevToken);
+    Call<Token> saveToken(
+            @Field("token") String token,
+            @Field("prevToken") String prevToken);
 
     @GET("search")
     Call<Equations> search(

@@ -20,7 +20,7 @@ import retrofit2.Response;
 public class FirebaseIDService extends FirebaseInstanceIdService {
     private static final String TAG = "FirebaseIDService";
     private CapstoneService equationService;
-
+    private String prevToken = "";
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
@@ -28,9 +28,7 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
         Log.d(TAG, "Refreshed token: " + refreshedToken);
         equationService = CapstoneApi.getClient().create(CapstoneService.class);
         // TODO: Implement this method to send any registration to your app's servers.
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-        String prevToken = pref.getString("device_token", null);
-        sendRegistrationToServer(refreshedToken, prevToken);
+        sendRegistrationToServer(refreshedToken);
     }
 
     /**
@@ -41,9 +39,18 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
      *
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token, String prevToken) {
+    private void sendRegistrationToServer(String token) {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
+
+        try {
+            prevToken = pref.getString("device_token", null);
+            if(prevToken == null){
+                prevToken = "Im Groot";
+            }
+        }catch (Exception e) {
+            Log.d(TAG, e.getMessage() + "");
+        }
 
 //        editor.putBoolean("key_name", true); // Storing boolean - true/false
         editor.remove("device_token");
@@ -54,10 +61,9 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
 //
         editor.commit(); // commit changes
         // Add custom implementation, as needed.
-        callTokenApi(token, prevToken).enqueue(new Callback<Token>() {
+        callTokenApi(token).enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
-                Log.d(TAG, "Glevinzon was here! : " + response.body().getDeviceToken());
             }
 
             @Override
@@ -67,7 +73,7 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
         });
     }
 
-    private Call<Token> callTokenApi(String token, String prevToken) {
+    private Call<Token> callTokenApi(String token) {
         return equationService.saveToken(token, prevToken);
     }
 }
