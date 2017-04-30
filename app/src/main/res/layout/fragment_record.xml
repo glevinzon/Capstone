@@ -1,13 +1,41 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.itp.glevinzon.capstone.RecordFragment">
+    xmlns:fancy="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO: Update blank fragment layout -->
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/btn_android"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:padding="20dp"
+        fancy:fb_defaultColor="#dcff0011"
+        fancy:fb_focusColor="#64ff0000"
+        fancy:fb_borderColor="#FFFFFF"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_text="RECORD"
+        fancy:fb_iconPaddingLeft="0dp"
+        fancy:fb_iconPaddingRight="0dp"
+        fancy:fb_radius="128dp"
+        fancy:fb_textColor="#FFFFFF"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Press the button steadily to record."
+        android:layout_below="@+id/btn_android"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="38dp" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:text="Once done, release the button." />
+
+</RelativeLayout>

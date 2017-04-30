@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -502,6 +503,21 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     }
 
     private void onButtonClick() {
+
+        checkFragmentVisibility();
+
+        if(fab.getVisibility() == View.GONE) {
+            fab.setVisibility(View.VISIBLE);
+        }
+
+        if(searchView.getVisibility() == View.GONE) {
+            searchView.setVisibility(View.VISIBLE);
+        }
+
+        if(fabRecord.getVisibility() == View.VISIBLE) {
+            fabRecord.setVisibility(View.GONE);
+        }
+
         if (Speech.getInstance().isListening()) {
             Speech.getInstance().stopListening();
         } else {
@@ -520,9 +536,32 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     }
 
     private void onRecordButtonClick() {
-        fab.setVisibility(View.GONE);
+//        fab.setVisibility(View.GONE);
         rv.setVisibility(View.GONE);
         searchView.setVisibility(View.GONE);
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.layoutHome, new RecordFragment(), "record");
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
+    }
+
+    private void checkFragmentVisibility(){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        RecordFragment f = (RecordFragment)
+                getSupportFragmentManager().findFragmentByTag("record");
+        if(f == null) {  // not added
+//            f = new RecordFragment();
+//            ft.add(R.id.layoutHome, f, "record");
+//            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        } else {  // already added
+            ft.remove(f);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        }
+
+        ft.commit();
     }
 
     private void onRecordAudioPermissionGranted() {
