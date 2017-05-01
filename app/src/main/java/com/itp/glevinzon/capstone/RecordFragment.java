@@ -1,5 +1,6 @@
 package com.itp.glevinzon.capstone;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -16,11 +17,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.itp.glevinzon.capstone.api.CapstoneApi;
+import com.itp.glevinzon.capstone.api.CapstoneService;
+import com.itp.glevinzon.capstone.models.Keyword;
+import com.itp.glevinzon.capstone.models.Tag;
+
+import org.json.JSONArray;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -40,11 +53,15 @@ public class RecordFragment extends Fragment {
     public static final int RequestPermissionCode = 1;
     MediaPlayer mediaPlayer;
 
+    private CapstoneService equationService;
+    private List<Tag> data;
+
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
+        equationService = CapstoneApi.getClient().create(CapstoneService.class);
         return inflater.inflate(R.layout.fragment_record, parent, false);
     }
 
@@ -54,6 +71,34 @@ public class RecordFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Setup any handles to view objects here
         // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
+
+        SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.remove("tags");
+
+
+        callTagsApi().enqueue(new Callback<Keyword>() {
+            @Override
+            public void onResponse(Call<Keyword> call, Response<Keyword> response) {
+                // Got data. Send it to adapter
+                data = fetchResults(response);
+                ArrayList<String> tagList = new ArrayList<String>();
+                for (int i=0; i<data.size(); i++) {
+                    Tag result = data.get(i);
+                    tagList.add(result.getName());
+                }
+
+                JSONArray jsArray = new JSONArray(tagList);
+                editor.putString("tags", jsArray.toString());
+                editor.commit();
+//                Toast.makeText(getContext(), jsArray.toString(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(Call<Keyword> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
         FancyButton btnRecord = (FancyButton) view.findViewById(R.id.btn_android);
 
         random = new Random();
@@ -110,6 +155,9 @@ public class RecordFragment extends Fragment {
                         recordStop();
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
                         AlertDialogToSaveRecordedAudio newFragment = AlertDialogToSaveRecordedAudio.newInstance();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("path", AudioSavePathInDevice);
+                        newFragment.setArguments(bundle);
                         newFragment.show(ft, "Alert Save");
                     }
                 }
@@ -123,7 +171,7 @@ public class RecordFragment extends Fragment {
         mediaRecorder.reset();
         mediaRecorder.release();
 
-        Toast.makeText(getContext(), "Recording Completed : " + AudioSavePathInDevice,
+        Toast.makeText(getContext(), "Recording Completed",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -181,5 +229,14 @@ public class RecordFragment extends Fragment {
                 RECORD_AUDIO);
         return result == PackageManager.PERMISSION_GRANTED &&
                 result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private Call<Keyword> callTagsApi() {
+        int COUNT = 999;
+        return equationService.getTags();
+    }
+    private List<Tag> fetchResults(Response<Keyword> response) {
+        Keyword keywords = response.body();
+        return keywords.getTags();
     }
 }

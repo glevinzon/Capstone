@@ -46,6 +46,7 @@ import net.gotev.speech.TextToSpeechCallback;
 import net.gotev.speech.ui.SpeechProgressView;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
 import retrofit2.Call;
@@ -81,6 +82,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     private SwipeRefreshLayout swipeContainer;
     private FloatingActionButton fabRecord;
+
+    Random random;
+    String randomChar = "ABCDEFGHIJKLMNOP";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,18 +195,30 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         String deviceToken = pref.getString("device_token", null);
-        Log.d(TAG, "Glevinzon was here : " + deviceToken);
+
+    }
+
+    public String createRandom(int string) {
+        StringBuilder stringBuilder = new StringBuilder(string);
+        int i = 0;
+        while (i < string) {
+            stringBuilder.append(randomChar.
+                    charAt(random.nextInt(randomChar.length())));
+
+            i++;
+        }
+        return stringBuilder.toString();
     }
 
     @Override
     public void onItemClick(View childView, int position) {
         final Datum result = data.get(position);
         Intent i = new Intent(this, MainActivity.class);
-        i.putExtra("eqId", result.getId()+"");
+        i.putExtra("eqId", result.getId() + "");
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getId() + "glevinzon was here");
         Speech.getInstance().unregisterDelegate();
-        if(result.getAudioUrl() != null) {
+        if (result.getAudioUrl() != null) {
             startActivity(i);
         } else {
             Toast.makeText(this, R.string.no_audio, Toast.LENGTH_LONG).show();
@@ -213,7 +229,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     public void onItemLongPress(View childView, int position) {
         final Datum result = data.get(position);
         Intent i = new Intent(this, UploadActivity.class);
-        i.putExtra("eqId", result.getId()+"");
+        i.putExtra("eqId", result.getId() + "");
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getId() + "glevinzon was here");
         Speech.getInstance().unregisterDelegate();
@@ -374,7 +390,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
                 data = fetchResults(response);
 
-                if(!data.isEmpty()){
+                if (!data.isEmpty()) {
                     adapter.clear();
                     adapter.addAll(data);
 
@@ -432,7 +448,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         } else if (throwable instanceof TimeoutException) {
             errorMsg = getResources().getString(R.string.error_msg_timeout);
         } else if (data.isEmpty()) {
-            errorMsg = getResources().getString(R.string.error_msg_no_data) + " with keyword `"+throwable.getMessage()+"`";
+            errorMsg = getResources().getString(R.string.error_msg_no_data) + " with keyword `" + throwable.getMessage() + "`";
         }
 
         return errorMsg;
@@ -506,15 +522,15 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         checkFragmentVisibility();
 
-        if(fab.getVisibility() == View.GONE) {
+        if (fab.getVisibility() == View.GONE) {
             fab.setVisibility(View.VISIBLE);
         }
 
-        if(searchView.getVisibility() == View.GONE) {
+        if (searchView.getVisibility() == View.GONE) {
             searchView.setVisibility(View.VISIBLE);
         }
 
-        if(fabRecord.getVisibility() == View.VISIBLE) {
+        if (fabRecord.getVisibility() == View.VISIBLE) {
             fabRecord.setVisibility(View.GONE);
         }
 
@@ -548,11 +564,11 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         ft.commit();
     }
 
-    private void checkFragmentVisibility(){
+    private void checkFragmentVisibility() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         RecordFragment f = (RecordFragment)
                 getSupportFragmentManager().findFragmentByTag("record");
-        if(f == null) {  // not added
+        if (f == null) {  // not added
 //            f = new RecordFragment();
 //            ft.add(R.id.layoutHome, f, "record");
 //            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

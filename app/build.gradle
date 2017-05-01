@@ -70,6 +70,8 @@ dependencies {
 
     compile 'com.github.medyo:fancybuttons:1.8.3'
 
+    compile 'com.googlecode.json-simple:json-simple:1.1'
+
     testCompile 'junit:junit:4.12'
 }
 

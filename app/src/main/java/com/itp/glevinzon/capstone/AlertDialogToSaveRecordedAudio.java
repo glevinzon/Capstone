@@ -15,6 +15,9 @@ public class AlertDialogToSaveRecordedAudio extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        Bundle bundle=this.getArguments();
+        String audioPath = bundle.getString("path");
+//        Toast.makeText(getContext(), "Path: " + audioPath, Toast.LENGTH_LONG).show();
         return new AlertDialog.Builder(getActivity())
 
                 .setIcon(R.mipmap.ic_launcher)
@@ -24,10 +27,13 @@ public class AlertDialogToSaveRecordedAudio extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
                         RecordFormDialogFragment newFragment = RecordFormDialogFragment.newInstance();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("path", audioPath);
+                        newFragment.setArguments(bundle);
                         newFragment.show(ft, "Alert Save");
                     }
                 })
-                .setNegativeButton("Retry", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }

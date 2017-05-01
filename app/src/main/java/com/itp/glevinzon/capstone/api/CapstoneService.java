@@ -1,6 +1,7 @@
 package com.itp.glevinzon.capstone.api;
 
 import com.itp.glevinzon.capstone.models.Equations;
+import com.itp.glevinzon.capstone.models.Keyword;
 import com.itp.glevinzon.capstone.models.Token;
 import com.itp.glevinzon.capstone.models.Upload;
 
@@ -20,6 +21,8 @@ import retrofit2.http.Query;
  */
 
 public interface CapstoneService {
+    @GET("tags")
+    Call<Keyword> getTags();
 
     @GET("equations")
     Call<Equations> getEquations(
@@ -50,4 +53,5 @@ public interface CapstoneService {
     @Multipart
     @POST("equation/upload")
     Call<Upload> uploadFile(@Part MultipartBody.Part file, @Part("file") RequestBody name, @Part("eqId") int eqId, @Part("deviceId") String deviceId);
+
 }
