@@ -53,6 +53,10 @@
             android:name=".RecordActivity"
             android:label="@string/title_activity_record"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PagerActivity"
+            android:label="@string/title_activity_pager"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

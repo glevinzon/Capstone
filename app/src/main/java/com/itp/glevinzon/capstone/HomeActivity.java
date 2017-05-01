@@ -35,6 +35,7 @@ import com.itp.glevinzon.capstone.models.Datum;
 import com.itp.glevinzon.capstone.models.Equations;
 import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
 import com.itp.glevinzon.capstone.utils.PaginationScrollListener;
+import com.itp.glevinzon.capstone.utils.Utils;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import net.gotev.speech.GoogleVoiceTypingDisabledException;
@@ -86,9 +87,29 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     Random random;
     String randomChar = "ABCDEFGHIJKLMNOP";
 
+    String[] colors = {"#96CC7A", "#EA705D", "#66BBCC"};
+
+    public static final String PREF_USER_FIRST_TIME = "user_first_time";
+    boolean isUserFirstTime;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isUserFirstTime = Boolean.valueOf(Utils.readSharedSetting(HomeActivity.this, PREF_USER_FIRST_TIME, "true"));
+
+        Intent introIntent = new Intent(HomeActivity.this, PagerActivity.class);
+        introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
+
+        if (isUserFirstTime)
+            startActivity(introIntent);
+
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
