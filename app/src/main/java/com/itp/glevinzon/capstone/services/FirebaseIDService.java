@@ -40,7 +40,7 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("CapstonePref", 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
 
         try {

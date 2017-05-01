@@ -51,7 +51,7 @@ public class RecordFormDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences pref = getContext().getSharedPreferences("CapstonePref", 0); // 0 - for private mode
         String tags = pref.getString("tags", null);
         Toast.makeText(getContext(), tags, Toast.LENGTH_LONG).show();
 

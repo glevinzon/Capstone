@@ -72,7 +72,7 @@ public class RecordFragment extends Fragment {
         // Setup any handles to view objects here
         // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
 
-        SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences pref = getContext().getSharedPreferences("CapstonePref", 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
         editor.remove("tags");
 

@@ -47,7 +47,6 @@ import net.gotev.speech.TextToSpeechCallback;
 import net.gotev.speech.ui.SpeechProgressView;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
 import retrofit2.Call;
@@ -84,19 +83,15 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     private SwipeRefreshLayout swipeContainer;
     private FloatingActionButton fabRecord;
 
-    Random random;
-    String randomChar = "ABCDEFGHIJKLMNOP";
-
     String[] colors = {"#96CC7A", "#EA705D", "#66BBCC"};
 
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
+    public static final String PREF_USER_NAME = "user_name";
     boolean isUserFirstTime;
 
     @Override
     protected void onStart() {
         super.onStart();
-
-
     }
 
     @Override
@@ -107,8 +102,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         Intent introIntent = new Intent(HomeActivity.this, PagerActivity.class);
         introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
 
-        if (isUserFirstTime)
+        if (isUserFirstTime) {
             startActivity(introIntent);
+        }
 
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -214,21 +210,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("CapstonePref", 0); // 0 - for private mode
         String deviceToken = pref.getString("device_token", null);
 
-    }
-
-    public String createRandom(int string) {
-        StringBuilder stringBuilder = new StringBuilder(string);
-        int i = 0;
-        while (i < string) {
-            stringBuilder.append(randomChar.
-                    charAt(random.nextInt(randomChar.length())));
-
-            i++;
-        }
-        return stringBuilder.toString();
     }
 
     @Override

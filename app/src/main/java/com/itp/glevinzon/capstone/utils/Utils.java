@@ -13,7 +13,7 @@ import com.itp.glevinzon.capstone.R;
  */
 
 public class Utils {
-    private static final String PREFERENCES_FILE = "materialsample_settings";
+    private static final String PREFERENCES_FILE = "CapstonePref";
 
 
     public static int getToolbarHeight(Context context) {
