@@ -5,11 +5,21 @@
             android:id="@+id/navigation_item_1"
             android:checked="true"
             android:icon="@drawable/ic_action_search"
-            android:title="Item One" />
+            android:title="Search" />
         <item
             android:id="@+id/navigation_item_2"
             android:icon="@drawable/ic_action_add"
-            android:title="Item Two" />
+            android:title="New Record" />
+        <item
+            android:id="@+id/navigation_item_3"
+            android:checked="true"
+            android:icon="@drawable/ok_mark"
+            android:title="Manage Requests" />
+        <item
+            android:id="@+id/navigation_item_4"
+            android:checked="true"
+            android:icon="@drawable/check_mark"
+            android:title="Local Recordings" />
     </group>
 
 

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -100,7 +99,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     NavigationView mNavigationView;
     CoordinatorLayout mContentFrame;
 
-    private static final String PREFERENCES_FILE = "mymaterialapp_settings";
+    private TextView subheader;
+
+    private static final String PREFERENCES_FILE = "CapstonePref";
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
@@ -127,7 +128,6 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         setUpToolbar();
 
@@ -142,8 +142,15 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         setUpNavDrawer();
 
+        String username = readSharedSetting(HomeActivity.this, PREF_USER_NAME, null);
+
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mContentFrame = (CoordinatorLayout) findViewById(R.id.nav_contentframe);
+        View header = mNavigationView.getHeaderView(0);
+
+        subheader = (TextView) header.findViewById(R.id.subHeader);
+
+        subheader.setText(username);
 
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -152,11 +159,13 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 menuItem.setChecked(true);
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_item_1:
-                        Snackbar.make(mContentFrame, "Item One", Snackbar.LENGTH_SHORT).show();
+//                        Snackbar.make(mContentFrame, "Item One", Snackbar.LENGTH_SHORT).show();
+                        onButtonClick();
                         mCurrentSelectedPosition = 0;
                         return true;
                     case R.id.navigation_item_2:
-                        Snackbar.make(mContentFrame, "Item Two", Snackbar.LENGTH_SHORT).show();
+//                        Snackbar.make(mContentFrame, "Item Two", Snackbar.LENGTH_SHORT).show();
+                        onRecordButtonClick();
                         mCurrentSelectedPosition = 1;
                         return true;
                     default:
@@ -169,7 +178,6 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         //speech
         progress = (SpeechProgressView) findViewById(R.id.progress);
         speechLayout = (LinearLayout) findViewById(R.id.speech_layout);
-        ;
 
         int[] colors = {
                 ContextCompat.getColor(this, R.color.pink),
@@ -268,7 +276,6 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("CapstonePref", 0); // 0 - for private mode
         String deviceToken = pref.getString("device_token", null);
-
     }
 
     @Override
