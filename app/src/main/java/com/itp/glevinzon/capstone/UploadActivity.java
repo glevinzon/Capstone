@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.itp.glevinzon.capstone.api.CapstoneApi;
 import com.itp.glevinzon.capstone.api.CapstoneService;
 import com.itp.glevinzon.capstone.models.Upload;
+import com.itp.glevinzon.capstone.utils.Utils;
 
 import java.io.File;
 
@@ -44,7 +45,7 @@ public class UploadActivity extends AppCompatActivity {
     private MultipartBody.Part fileToUpload;
     private RequestBody filename;
     private String eqId = "24";
-    private String deviceId = "000-001-000";
+    private RequestBody username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class UploadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_upload);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        String str = Utils.readSharedSetting(UploadActivity.this, HomeActivity.PREF_USER_NAME, null);
+        username = RequestBody.create(MediaType.parse("text/plain"), str);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Uploading...");
@@ -167,9 +170,8 @@ public class UploadActivity extends AppCompatActivity {
     private Call<Upload> callUploadApi() {
         return equationService.uploadFile(
                 fileToUpload,
-                filename,
                 Integer.parseInt(eqId),
-                deviceId
+                username
         );
     }
 

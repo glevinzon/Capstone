@@ -91,6 +91,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     String[] colors = {"#96CC7A", "#EA705D", "#66BBCC"};
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
     public static final String PREF_USER_NAME = "user_name";
+    public static final String PREF_USER_ROLE = "user_role";
     boolean isUserFirstTime;
 
     //navigation
@@ -152,6 +153,18 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         subheader.setText(username);
 
+        String user_role = readSharedSetting(HomeActivity.this, PREF_USER_ROLE, null);
+
+        Menu nav_Menu = mNavigationView.getMenu();
+
+        if(user_role != null){
+            if (user_role.equals("admin")) {
+                nav_Menu.findItem(R.id.navigation_item_4).setVisible(true);
+            } else {
+                nav_Menu.findItem(R.id.navigation_item_4).setVisible(false);
+            }
+        }
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -160,13 +173,31 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_item_1:
 //                        Snackbar.make(mContentFrame, "Item One", Snackbar.LENGTH_SHORT).show();
-                        onButtonClick();
+                        Intent intent = getIntent();
+                        overridePendingTransition(0, 0);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(intent);
                         mCurrentSelectedPosition = 0;
                         return true;
                     case R.id.navigation_item_2:
+//                        Snackbar.make(mContentFrame, "Item One", Snackbar.LENGTH_SHORT).show();
+                        onButtonClick();
+                        mCurrentSelectedPosition = 1;
+                        return true;
+                    case R.id.navigation_item_3:
 //                        Snackbar.make(mContentFrame, "Item Two", Snackbar.LENGTH_SHORT).show();
                         onRecordButtonClick();
-                        mCurrentSelectedPosition = 1;
+                        mCurrentSelectedPosition = 2;
+                        return true;
+                    case R.id.navigation_item_4:
+                        onRecordButtonClick();
+                        mCurrentSelectedPosition = 3;
+                        return true;
+                    case R.id.navigation_item_5:
+                        onRecordButtonClick();
+                        mCurrentSelectedPosition = 4;
                         return true;
                     default:
                         return true;
@@ -779,6 +810,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         Menu menu = mNavigationView.getMenu();
         menu.getItem(mCurrentSelectedPosition).setChecked(true);
     }
+
     private void setUpToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null) {

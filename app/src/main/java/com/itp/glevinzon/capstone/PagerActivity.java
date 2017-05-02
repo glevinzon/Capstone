@@ -23,8 +23,6 @@ import android.widget.TextView;
 
 import com.itp.glevinzon.capstone.utils.Utils;
 
-import java.util.Random;
-
 public class PagerActivity extends AppCompatActivity {
 
     /**
@@ -51,11 +49,6 @@ public class PagerActivity extends AppCompatActivity {
 
     CoordinatorLayout mCoordinator;
 
-    Random random;
-    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    private String username = "";
-
     static final String TAG = "PagerActivity";
 
     int page = 0;   //  to track page position
@@ -74,7 +67,6 @@ public class PagerActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_pager);
 
-        username = randomAlphaNumeric(9);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -178,19 +170,10 @@ public class PagerActivity extends AppCompatActivity {
                 finish();
                 //  update 1st time pref
                 Utils.saveSharedSetting(PagerActivity.this, HomeActivity.PREF_USER_FIRST_TIME, "false");
-                Utils.saveSharedSetting(PagerActivity.this, HomeActivity.PREF_USER_NAME, username);
+                Utils.saveSharedSetting(PagerActivity.this, HomeActivity.PREF_USER_ROLE, "user");
             }
         });
 
-    }
-
-    public static String randomAlphaNumeric(int count) {
-        StringBuilder builder = new StringBuilder();
-        while (count-- != 0) {
-            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
-            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
-        }
-        return builder.toString();
     }
 
     void updateIndicators(int position) {

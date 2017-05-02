@@ -1,5 +1,6 @@
 package com.itp.glevinzon.capstone;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -14,11 +15,25 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.Toast;
 
+import com.itp.glevinzon.capstone.api.CapstoneApi;
+import com.itp.glevinzon.capstone.api.CapstoneService;
+import com.itp.glevinzon.capstone.models.Equation;
+import com.itp.glevinzon.capstone.utils.Utils;
+
+import org.json.JSONArray;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Glevinzon on 4/30/2017.
@@ -36,6 +51,18 @@ public class RecordFormDialogFragment extends DialogFragment {
 
     private EditText inputName, inputNote;
     private TextInputLayout inputLayoutName, inputLayoutNote, inputLayoutTag;
+
+    private RequestBody name, note, tags;
+
+    ProgressDialog progressDialog;
+
+    private CapstoneService equationService;
+
+    private MultipartBody.Part fileToUpload;
+    private RequestBody filename;
+
+    private RequestBody username;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,6 +73,14 @@ public class RecordFormDialogFragment extends DialogFragment {
                 false);
         getDialog().setTitle("New Record");
 
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Uploading...");
+
+        equationService = CapstoneApi.getClient().create(CapstoneService.class);
+
+        String str = Utils.readSharedSetting(getContext(), HomeActivity.PREF_USER_NAME, null);
+        username = RequestBody.create(MediaType.parse("text/plain"), str);
+
         return rootView;
     }
     @Override
@@ -53,7 +88,7 @@ public class RecordFormDialogFragment extends DialogFragment {
 
         SharedPreferences pref = getContext().getSharedPreferences("CapstonePref", 0); // 0 - for private mode
         String tags = pref.getString("tags", null);
-        Toast.makeText(getContext(), tags, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getContext(), tags, Toast.LENGTH_LONG).show();
 
         inputLayoutName = (TextInputLayout) view.findViewById(R.id.equation_input_layout_name);
         inputLayoutNote = (TextInputLayout) view.findViewById(R.id.equation_input_layout_note);
@@ -98,10 +133,45 @@ public class RecordFormDialogFragment extends DialogFragment {
             return;
         }
 
-        Toast.makeText(getContext(), "Thank You!", Toast.LENGTH_SHORT).show();
+        progressDialog.show();
+
+        // Map is used to multipart the file using okhttp3.RequestBody
+        File file = new File(audioPath);
+
+        // Parsing any Media type file
+        RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
+        fileToUpload = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+        filename = RequestBody.create(MediaType.parse("text/plain"), file.getName());
+
+        callSaveEquationApi().enqueue(new Callback<Equation>() {
+            @Override
+            public void onResponse(Call<Equation> call, Response<Equation> response) {
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<Equation> call, Throwable t) {
+
+            }
+        });
+
+        getDialog().dismiss();
+    }
+
+    private Call<Equation> callSaveEquationApi() {
+        return equationService.saveEquation(
+                fileToUpload,
+                username,
+                name,
+                note,
+                tags
+        );
     }
 
     private boolean validateName() {
+        String str = inputNote.getText().toString().trim();
+        name = RequestBody.create(MediaType.parse("text/plain"), str);
+
         if (inputName.getText().toString().trim().isEmpty()) {
             inputLayoutName.setError(getString(R.string.err_msg_name));
             requestFocus(inputName);
@@ -120,7 +190,8 @@ public class RecordFormDialogFragment extends DialogFragment {
     }
 
     private boolean validateNote() {
-        String note = inputNote.getText().toString().trim();
+        String str = inputNote.getText().toString().trim();
+        note = RequestBody.create(MediaType.parse("text/plain"), str);
 
         if (inputNote.getText().toString().trim().isEmpty()) {
             inputLayoutNote.setError(getString(R.string.err_msg_note));
@@ -134,7 +205,15 @@ public class RecordFormDialogFragment extends DialogFragment {
     }
 
     private boolean validateTag() {
-        String tag = multiTextAutoComplete.getText().toString().trim();
+        String str = multiTextAutoComplete.getText().toString().trim();
+//        str = str.replaceAll("\\s","");
+        ArrayList<String> arrList = new ArrayList<String>(Arrays.asList(str.toString().split(",")));
+//        Toast.makeText(getContext(), tags.toString(),Toast.LENGTH_LONG).show();
+//        tag = RequestBody.create(MediaType.parse("text/plain"), str);
+//        String temp = myList.toString();
+//        tags = RequestBody.create(MediaType.parse("text/plain"), temp);
+        JSONArray jsArray = new JSONArray(arrList);
+        tags = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsArray.toString());
 
         if (multiTextAutoComplete.getText().toString().trim().isEmpty()) {
             inputLayoutTag.setError(getString(R.string.err_msg_note));

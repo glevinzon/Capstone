@@ -1,7 +1,9 @@
 package com.itp.glevinzon.capstone.api;
 
+import com.itp.glevinzon.capstone.models.Equation;
 import com.itp.glevinzon.capstone.models.Equations;
 import com.itp.glevinzon.capstone.models.Keyword;
+import com.itp.glevinzon.capstone.models.Requests.Request;
 import com.itp.glevinzon.capstone.models.Token;
 import com.itp.glevinzon.capstone.models.Upload;
 
@@ -34,6 +36,7 @@ public interface CapstoneService {
     @POST("tokens")
     @FormUrlEncoded
     Call<Token> saveToken(
+            @Field("username") String username,
             @Field("token") String token,
             @Field("prevToken") String prevToken);
 
@@ -52,6 +55,27 @@ public interface CapstoneService {
 
     @Multipart
     @POST("equation/upload")
-    Call<Upload> uploadFile(@Part MultipartBody.Part file, @Part("file") RequestBody name, @Part("eqId") int eqId, @Part("deviceId") String deviceId);
+    Call<Upload> uploadFile(@Part MultipartBody.Part file, @Part("eqId") int eqId, @Part("deviceId") RequestBody deviceId);
+
+    @POST("equations")
+    @Multipart
+    Call<Equation> saveEquation(
+            @Part MultipartBody.Part file,
+            @Part("username") RequestBody username,
+            @Part("name") RequestBody name,
+            @Part("note") RequestBody note,
+            @Part("tags") RequestBody tags);
+
+    @POST("request/activate")
+    @FormUrlEncoded
+    Call<Request> activate(
+            @Field("id") Integer id);
+
+    @GET("requests")
+    Call<Request> getRequests(
+            @Query("filter") String filter,
+            @Query("page") int page,
+            @Query("count") int count
+    );
 
 }

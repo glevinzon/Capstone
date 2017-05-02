@@ -4,13 +4,19 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by glen on 4/5/17.
+ * Created by Glevinzon on 5/1/2017.
  */
 
-public class Token {
-    @SerializedName("device_token")
+public class Equation {
+    @SerializedName("userId")
     @Expose
-    private String deviceToken;
+    private Integer userId;
+    @SerializedName("name")
+    @Expose
+    private String name;
+    @SerializedName("note")
+    @Expose
+    private String note;
     @SerializedName("code")
     @Expose
     private String code;
@@ -23,16 +29,32 @@ public class Token {
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("username")
+    @SerializedName("audioUrl")
     @Expose
-    private String username;
+    private String audioUrl;
 
-    public String getDeviceToken() {
-        return deviceToken;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getCode() {
@@ -67,12 +89,11 @@ public class Token {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAudioUrl() {
+        return audioUrl;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAudioUrl(String audioUrl) {
+        this.audioUrl = audioUrl;
     }
-
 }

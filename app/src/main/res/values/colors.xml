@@ -44,7 +44,8 @@
     <color name="cyan_50">#E0F7FA</color>
     <color name="amber_50">#FFF8E1</color>
     <color name="purple_50">#F3E5F5</color>
-
+    <item name="green_200" type="color">#72d572</item>
+    <item name="blue_grey_800" type="color">#37474f</item>
     <array name="mdcolor_50">
         <item name="red_50" type="color">#fde0dc</item>
         <item name="pink_50" type="color">#fce4ec</item>
@@ -298,26 +299,25 @@
         <item name="orange_A400" type="color">#ff9100</item>
         <item name="deep_orange_A400" type="color">#ff3d00</item>
     </array>
-    <array name="mdcolor_A700">
-        <item name="red_A700" type="color">#e00032</item>
-        <item name="pink_A700" type="color">#c51162</item>
-        <item name="purple_A700" type="color">#aa00ff</item>
-        <item name="deep_purple_A700" type="color">#6200ea</item>
-        <item name="indigo_A700" type="color">#304ffe</item>
-        <item name="blue_A700" type="color">#4d69ff</item>
-        <item name="light_blue_A700" type="color">#0091ea</item>
-        <item name="cyan_A700" type="color">#00b8d4</item>
-        <item name="teal_A700" type="color">#00bfa5</item>
-        <item name="green_A700" type="color">#12c700</item>
-        <item name="light_green_A700" type="color">#64dd17</item>
-        <item name="lime_A700" type="color">#aeea00</item>
-        <item name="yellow_A700" type="color">#ffd600</item>
-        <item name="orange_A700" type="color">#ff6d00</item>
-        <item name="deep_orange_A700" type="color">#dd2c00</item>
-    </array>
+    <item name="red_A700" type="color">#e00032</item>
+    <item name="pink_A700" type="color">#c51162</item>
+    <item name="purple_A700" type="color">#aa00ff</item>
+    <item name="deep_purple_A700" type="color">#6200ea</item>
+    <item name="indigo_A700" type="color">#304ffe</item>
+    <item name="blue_A700" type="color">#4d69ff</item>
+    <item name="light_blue_A700" type="color">#0091ea</item>
+    <item name="cyan_A700" type="color">#00b8d4</item>
+    <item name="teal_A700" type="color">#00bfa5</item>
+    <item name="green_A700" type="color">#12c700</item>
+    <item name="light_green_A700" type="color">#64dd17</item>
+    <item name="lime_A700" type="color">#aeea00</item>
+    <item name="yellow_A700" type="color">#ffd600</item>
+    <item name="orange_A700" type="color">#ff6d00</item>
+    <item name="deep_orange_A700" type="color">#dd2c00</item>
+    <item name="grey_1000b" type="color">#000000</item>
+    <item name="grey_1000w" type="color">#ffffff</item>
     <array name="extra">
-        <item name="grey_1000b" type="color">#000000</item>
-        <item name="grey_1000w" type="color">#ffffff</item>
+
     </array>
 
 </resources>
