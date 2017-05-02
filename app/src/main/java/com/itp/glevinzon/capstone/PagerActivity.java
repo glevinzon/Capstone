@@ -170,7 +170,6 @@ public class PagerActivity extends AppCompatActivity {
                 finish();
                 //  update 1st time pref
                 Utils.saveSharedSetting(PagerActivity.this, HomeActivity.PREF_USER_FIRST_TIME, "false");
-                Utils.saveSharedSetting(PagerActivity.this, HomeActivity.PREF_USER_ROLE, "user");
             }
         });
 

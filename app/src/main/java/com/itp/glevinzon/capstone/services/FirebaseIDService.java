@@ -24,12 +24,12 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
     private CapstoneService equationService;
     private String prevToken = "";
     private String username = "";
-    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
-        username = randomAlphaNumeric(9);
-        Utils.saveSharedSetting(FirebaseIDService.this, HomeActivity.PREF_USER_NAME, username);
+//        username = randomAlphaNumeric(9);
+//        Utils.saveSharedSetting(FirebaseIDService.this, HomeActivity.PREF_USER_NAME, username);
+        username = Utils.readSharedSetting(getApplicationContext(), HomeActivity.PREF_USER_NAME, null);
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
         equationService = CapstoneApi.getClient().create(CapstoneService.class);
@@ -77,15 +77,6 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
                 t.printStackTrace();
             }
         });
-    }
-
-    public static String randomAlphaNumeric(int count) {
-        StringBuilder builder = new StringBuilder();
-        while (count-- != 0) {
-            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
-            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
-        }
-        return builder.toString();
     }
 
     private Call<Token> callTokenApi(String token) {
