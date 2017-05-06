@@ -44,13 +44,14 @@
                     android:layout_width="230dp"
                     android:layout_height="230dp"
                     android:layout_centerInParent="true"
-                    app:imageCover="@drawable/eagle"
-                    app:selectedAction1="@drawable/shuffle_selected"
-                    app:selectedAction2="@drawable/like_selected"
-                    app:selectedAction3="@drawable/replay_selected"
-                    app:unselectedAction1="@drawable/shuffle_unselected"
-                    app:unselectedAction2="@drawable/like_unselected"
-                    app:unselectedAction3="@drawable/replay_unselected" />
+                    app:imageCover="@drawable/eagle" />
+                    <!--app:selectedAction1="@drawable/shuffle_selected"-->
+                    <!--app:selectedAction2="@drawable/like_selected"-->
+                    <!--app:selectedAction3="@drawable/replay_selected"-->
+                    <!--app:unselectedAction1="@drawable/shuffle_unselected"-->
+                    <!--app:unselectedAction2="@drawable/like_unselected"-->
+                    <!--app:unselectedAction3="@drawable/replay_unselected" -->
+
 
                 <!--<ImageView-->
                 <!--android:layout_width="33dp"-->

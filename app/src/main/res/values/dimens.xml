@@ -32,4 +32,10 @@
 
     <dimen name="popup_width">25dp</dimen>
     <dimen name="popup_height">25dp</dimen>
+
+    <dimen name="crop_corner_width">75dp</dimen>
+    <dimen name="crop_corner_width_halved">38dp</dimen>
+
+    <dimen name="crop_control_width">300dp</dimen>
+    <dimen name="crop_control_height">200dp</dimen>
 </resources>

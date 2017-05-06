@@ -320,4 +320,11 @@
 
     </array>
 
+
+    <color name="black_overlay">#66000000</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent_white">#abffffff</color>
+    <color name="transluscent_white">#2cffffff</color>
+
 </resources>

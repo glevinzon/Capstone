@@ -7,6 +7,13 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.itp.glevinzon.capstone.HomeActivity">
+
+    <!--<fragment-->
+        <!--android:name="com.itp.glevinzon.capstone.CameraFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:tag="CameraFragment" />-->
+
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/nav_contentframe"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -39,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
             android:clickable="true"
-            android:src="@drawable/record"
+            android:src="@drawable/camera"
             app:backgroundTint="#FFFFFF"
             app:fabSize="normal"
             app:layout_anchor="@+id/layoutHome"
@@ -54,8 +61,7 @@
             android:clickable="true"
             app:backgroundTint="#FFFFFF"
             app:fabSize="normal"
-            app:srcCompat="@drawable/speak"
-            android:scaleType="center"/>
+            app:srcCompat="@drawable/search"/>
 
     </android.support.design.widget.CoordinatorLayout>
     <android.support.design.widget.NavigationView

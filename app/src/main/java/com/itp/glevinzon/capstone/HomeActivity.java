@@ -657,7 +657,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
-        ft.replace(R.id.layoutHome, new RecordFragment(), "record");
+        ft.replace(R.id.layoutHome, new CameraFragment(), "CameraFragment");
         // or ft.add(R.id.your_placeholder, new FooFragment());
         // Complete the changes added above
         ft.commit();
