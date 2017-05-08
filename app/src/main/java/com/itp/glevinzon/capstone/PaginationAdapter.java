@@ -15,12 +15,16 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.itp.glevinzon.capstone.models.Datum;
+import com.itp.glevinzon.capstone.models.Tag;
 import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import fisk.chipcloud.ChipCloud;
+import fisk.chipcloud.ChipCloudConfig;
 import katex.hourglass.in.mathlib.MathView;
 
 /**
@@ -34,6 +38,7 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final String TAG = "ADAPTER";
     private String BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/not-applicable.png";
     private List<Datum> equationResults;
+    private List<Tag> equationTags;
     private Context context;
 
     private ItemClickListener clickListener;
@@ -46,6 +51,8 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private String errorMsg;
 
+    private ChipCloud chipCloud;
+
     public PaginationAdapter(Context context) {
         this.context = context;
         this.mCallback = (PaginationAdapterCallback) context;
@@ -54,6 +61,9 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public List<Datum> getEquations() {
         return equationResults;
+    }
+    public void setTags(List<Tag> tags) {
+        this.equationTags = tags ;
     }
 
     public void setMovies(List<Datum> equationResults) {
@@ -135,11 +145,24 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 + "EN"
                 );
 //                viewHolder.mMovieDesc.setText(data.getNote());
+                ArrayList<String> arrList = new ArrayList<String>();
+
+                if(equationTags != null){
+                    for (Tag temp : equationTags) {
+                        if(data.getId().equals(temp.getId())){
+                            arrList.add(temp.getName());
+                        }
+                    }
+
+                    chipCloud.addChips(arrList);
+                }
+
                 String laTex = "";
                 String tex = "$ "+ laTex +" $";
                 if(!laTex.isEmpty()){
                     viewHolder.mathView.setDisplayText(tex);
                 }
+
 
                 /**
                  * Using Glide to handle image loading.
@@ -322,6 +345,18 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //            mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
 
 //            mPosterImg.setBackgroundColor(getMatColor("A100"));
+
+            FlexboxLayout flexbox = (FlexboxLayout) itemView.findViewById(R.id.flexbox);
+
+            ChipCloudConfig config = new ChipCloudConfig()
+                    .selectMode(ChipCloud.SelectMode.multi)
+                    .checkedChipColor(Color.parseColor("#ddaa00"))
+                    .checkedTextColor(Color.parseColor("#ffffff"))
+                    .uncheckedChipColor(Color.parseColor("#efefef"))
+                    .uncheckedTextColor(Color.parseColor("#666666"));
+
+            chipCloud = new ChipCloud(context, flexbox, config);
+
             itemView.setTag(itemView);
             itemView.setOnClickListener(this);
         }

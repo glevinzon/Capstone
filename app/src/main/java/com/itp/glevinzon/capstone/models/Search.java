@@ -1,25 +1,25 @@
 package com.itp.glevinzon.capstone.models;
 
-/**
- * Created by glen on 4/3/17.
- */
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Equations {
+/**
+ * Created by Glevinzon on 5/8/2017.
+ */
+
+public class Search {
 
     @SerializedName("total")
     @Expose
     private Integer total;
-    @SerializedName("perPage")
-    @Expose
-    private Integer perPage;
     @SerializedName("currentPage")
     @Expose
     private Integer currentPage;
+    @SerializedName("perPage")
+    @Expose
+    private Integer perPage;
     @SerializedName("lastPage")
     @Expose
     private Integer lastPage;
@@ -35,20 +35,20 @@ public class Equations {
         this.total = total;
     }
 
-    public Integer getPerPage() {
-        return perPage;
-    }
-
-    public void setPerPage(Integer perPage) {
-        this.perPage = perPage;
-    }
-
     public Integer getCurrentPage() {
         return currentPage;
     }
 
     public void setCurrentPage(Integer currentPage) {
         this.currentPage = currentPage;
+    }
+
+    public Integer getPerPage() {
+        return perPage;
+    }
+
+    public void setPerPage(Integer perPage) {
+        this.perPage = perPage;
     }
 
     public Integer getLastPage() {

@@ -1,9 +1,10 @@
 package com.itp.glevinzon.capstone.api;
 
+import com.itp.glevinzon.capstone.models.Capstone;
 import com.itp.glevinzon.capstone.models.Equation;
-import com.itp.glevinzon.capstone.models.Equations;
 import com.itp.glevinzon.capstone.models.Keyword;
 import com.itp.glevinzon.capstone.models.Requests.Request;
+import com.itp.glevinzon.capstone.models.Search;
 import com.itp.glevinzon.capstone.models.Token;
 import com.itp.glevinzon.capstone.models.Upload;
 
@@ -27,7 +28,7 @@ public interface CapstoneService {
     Call<Keyword> getTags();
 
     @GET("equations")
-    Call<Equations> getEquations(
+    Call<Capstone> getEquations(
             @Query("filter") String filter,
             @Query("page") int page,
             @Query("count") int count
@@ -41,13 +42,13 @@ public interface CapstoneService {
             @Field("prevToken") String prevToken);
 
     @GET("search")
-    Call<Equations> search(
+    Call<Search> search(
             @Query("keyword") String keyword,
             @Query("page") int page,
             @Query("count") int count
     );
     @GET("equations/related")
-    Call<Equations> getRelated(
+    Call<Search> getRelated(
             @Query("eqId")  String eqId,
             @Query("page") int page,
             @Query("count") int count

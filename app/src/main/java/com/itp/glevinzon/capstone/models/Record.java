@@ -4,10 +4,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Glevinzon on 4/30/2017.
+ * Created by Glevinzon on 5/8/2017.
  */
 
-public class Tag {
+public class Record {
 
     @SerializedName("id")
     @Expose
@@ -15,12 +15,12 @@ public class Tag {
     @SerializedName("code")
     @Expose
     private String code;
-    @SerializedName("name")
+    @SerializedName("eqId")
     @Expose
-    private String name;
-    @SerializedName("active")
+    private Integer eqId;
+    @SerializedName("tagId")
     @Expose
-    private Integer active;
+    private Integer tagId;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -44,20 +44,20 @@ public class Tag {
         this.code = code;
     }
 
-    public String getName() {
-        return name;
+    public Integer getEqId() {
+        return eqId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEqId(Integer eqId) {
+        this.eqId = eqId;
     }
 
-    public Integer getActive() {
-        return active;
+    public Integer getTagId() {
+        return tagId;
     }
 
-    public void setActive(Integer active) {
-        this.active = active;
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId;
     }
 
     public String getCreatedAt() {

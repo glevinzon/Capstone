@@ -35,8 +35,11 @@ import android.widget.Toast;
 
 import com.itp.glevinzon.capstone.api.CapstoneApi;
 import com.itp.glevinzon.capstone.api.CapstoneService;
+import com.itp.glevinzon.capstone.models.Capstone;
 import com.itp.glevinzon.capstone.models.Datum;
 import com.itp.glevinzon.capstone.models.Equations;
+import com.itp.glevinzon.capstone.models.Search;
+import com.itp.glevinzon.capstone.models.Tag;
 import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
 import com.itp.glevinzon.capstone.utils.PaginationScrollListener;
 import com.itp.glevinzon.capstone.utils.Utils;
@@ -79,7 +82,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     private CapstoneService equationService;
 
+    private Equations eqData;
     private List<Datum> data;
+    private List<Tag> tags;
 
     private String keyword = "";
     private Boolean isSearch = false;
@@ -314,6 +319,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         final Datum result = data.get(position);
         Intent i = new Intent(this, MainActivity.class);
         i.putExtra("eqId", result.getId() + "");
+
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getId() + "glevinzon was here");
         Speech.getInstance().unregisterDelegate();
@@ -341,14 +347,17 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         // To ensure list is visible when retry button in error view is clicked
         hideErrorView();
 
-        callEquationsApi().enqueue(new Callback<Equations>() {
+        callEquationsApi().enqueue(new Callback<Capstone>() {
             @Override
-            public void onResponse(Call<Equations> call, Response<Equations> response) {
+            public void onResponse(Call<Capstone> call, Response<Capstone> response) {
                 // Got data. Send it to adapter
 
                 hideErrorView();
 
                 data = fetchResults(response);
+                tags = fetchTags(response);
+
+                adapter.setTags(tags);
 
                 Log.d(TAG, data + " Glevinzon");
                 progressBar.setVisibility(View.GONE);
@@ -367,7 +376,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             }
 
             @Override
-            public void onFailure(Call<Equations> call, Throwable t) {
+            public void onFailure(Call<Capstone> call, Throwable t) {
                 t.printStackTrace();
                 showErrorView(t);
                 swipeContainer.setRefreshing(false);
@@ -380,22 +389,36 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
      * @param response extracts List<{@link Datum>} from response
      * @return
      */
-    private List<Datum> fetchResults(Response<Equations> response) {
-        Equations equations = response.body();
+    private List<Datum> fetchResults(Response<Capstone> response) {
+        Equations equations = response.body().getEquations();
         return equations.getData();
     }
 
-    private Integer fetchLastPage(Response<Equations> response) {
-        Equations equations = response.body();
+    private List<Datum> fetchSearchResults(Response<Search> response) {
+        Search search = response.body();
+        return search.getData();
+    }
+
+    private List<Tag> fetchTags(Response<Capstone> response) {
+        return response.body().getTags();
+    }
+
+    private Integer fetchLastPage(Response<Capstone> response) {
+        Equations equations = response.body().getEquations();
+        return equations.getLastPage();
+    }
+
+    private Integer fetchSearchLastPage(Response<Search> response) {
+        Search equations = response.body();
         return equations.getLastPage();
     }
 
     private void loadNextPage() {
         Log.d(TAG, "loadNextPage: " + currentPage);
 
-        callEquationsApi().enqueue(new Callback<Equations>() {
+        callEquationsApi().enqueue(new Callback<Capstone>() {
             @Override
-            public void onResponse(Call<Equations> call, Response<Equations> response) {
+            public void onResponse(Call<Capstone> call, Response<Capstone> response) {
                 adapter.removeLoadingFooter();
                 isLoading = false;
 
@@ -412,7 +435,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             }
 
             @Override
-            public void onFailure(Call<Equations> call, Throwable t) {
+            public void onFailure(Call<Capstone> call, Throwable t) {
                 t.printStackTrace();
                 adapter.showRetry(true, fetchErrorMessage(t));
             }
@@ -422,13 +445,13 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     private void loadNextSearchResultPage() {
         Log.d(TAG, "loadNextPage: " + currentPage);
 
-        callSearchEquationsApi().enqueue(new Callback<Equations>() {
+        callSearchEquationsApi().enqueue(new Callback<Search>() {
             @Override
-            public void onResponse(Call<Equations> call, Response<Equations> response) {
+            public void onResponse(Call<Search> call, Response<Search> response) {
                 adapter.removeLoadingFooter();
                 isLoading = false;
 
-                data = fetchResults(response);
+                data = fetchSearchResults(response);
                 adapter.addAll(data);
 
                 if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
@@ -440,7 +463,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             }
 
             @Override
-            public void onFailure(Call<Equations> call, Throwable t) {
+            public void onFailure(Call<Search> call, Throwable t) {
                 t.printStackTrace();
                 adapter.showRetry(true, fetchErrorMessage(t));
             }
@@ -453,7 +476,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
      * As {@link #currentPage} will be incremented automatically
      * by @{@link PaginationScrollListener} to load next page.
      */
-    private Call<Equations> callEquationsApi() {
+    private Call<Capstone> callEquationsApi() {
         int COUNT = 999;
         return equationService.getEquations(
                 "paginate",
@@ -462,7 +485,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         );
     }
 
-    private Call<Equations> callSearchEquationsApi() {
+    private Call<Search> callSearchEquationsApi() {
         int COUNT = 999;
         Log.d(TAG, keyword + currentPage);
         return equationService.search(
@@ -475,9 +498,9 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     private void loadSearchResult() {
         Log.d(TAG, "loadSearchResult: " + currentPage);
         currentPage = PAGE_START;
-        callSearchEquationsApi().enqueue(new Callback<Equations>() {
+        callSearchEquationsApi().enqueue(new Callback<Search>() {
             @Override
-            public void onResponse(Call<Equations> call, Response<Equations> response) {
+            public void onResponse(Call<Search> call, Response<Search> response) {
                 adapter.removeLoadingFooter();
                 isLoading = false;
 
@@ -487,7 +510,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
                 loadFirstPage();
 
-                data = fetchResults(response);
+                data = fetchSearchResults(response);
 
                 if (!data.isEmpty()) {
                     adapter.clear();
@@ -509,7 +532,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             }
 
             @Override
-            public void onFailure(Call<Equations> call, Throwable t) {
+            public void onFailure(Call<Search> call, Throwable t) {
                 t.printStackTrace();
                 adapter.showRetry(true, fetchErrorMessage(t));
             }

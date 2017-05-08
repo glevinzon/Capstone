@@ -95,6 +95,11 @@ dependencies {
     //mathview
     compile 'in.hourglass.mathrender:katexmathview:1.0'
 //    compile 'io.github.kexanie.library:MathView:0.0.6'
+
+    //chipsview
+    compile 'com.github.fiskurgit:ChipCloud:3.0.3'
+    //flexlayout
+    compile 'com.google.android:flexbox:0.2.6'
 }
 
 
