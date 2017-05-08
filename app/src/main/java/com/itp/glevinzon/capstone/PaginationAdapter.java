@@ -11,21 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.itp.glevinzon.capstone.models.Datum;
 import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import katex.hourglass.in.mathlib.MathView;
 
 /**
  * Created by glen on 3/31/17.
@@ -138,7 +134,12 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 + " | "
                                 + "EN"
                 );
-                viewHolder.mMovieDesc.setText(data.getNote());
+//                viewHolder.mMovieDesc.setText(data.getNote());
+                String laTex = "";
+                String tex = "$ "+ laTex +" $";
+                if(!laTex.isEmpty()){
+                    viewHolder.mathView.setDisplayText(tex);
+                }
 
                 /**
                  * Using Glide to handle image loading.
@@ -146,28 +147,28 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                  * <a href="http://blog.grafixartist.com/image-gallery-app-android-studio-1-4-glide/" />
                  */
                 Log.d(TAG, "Glide " + BASE_URL_IMG);
-                Glide
-                        .with(context)
-                        .load(BASE_URL_IMG)
-                        .listener(new RequestListener<String, GlideDrawable>() {
-                            @Override
-                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                // TODO: 08/11/16 handle failure
-                                viewHolder.mProgress.setVisibility(View.GONE);
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                // image ready, hide progress now
-                                viewHolder.mProgress.setVisibility(View.GONE);
-                                return false;   // return false if you want Glide to handle everything else.
-                            }
-                        })
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)   // cache both original & resized image
-//                        .centerCrop()
-                        .crossFade()
-                        .into(viewHolder.mPosterImg);
+//                Glide
+//                        .with(context)
+//                        .load(BASE_URL_IMG)
+//                        .listener(new RequestListener<String, GlideDrawable>() {
+//                            @Override
+//                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+//                                // TODO: 08/11/16 handle failure
+//                                viewHolder.mProgress.setVisibility(View.GONE);
+//                                return false;
+//                            }
+//
+//                            @Override
+//                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+//                                // image ready, hide progress now
+//                                viewHolder.mProgress.setVisibility(View.GONE);
+//                                return false;   // return false if you want Glide to handle everything else.
+//                            }
+//                        })
+//                        .diskCacheStrategy(DiskCacheStrategy.ALL)   // cache both original & resized image
+////                        .centerCrop()
+//                        .crossFade()
+//                        .into(viewHolder.mPosterImg);
                 BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/not-applicable.png";
                 break;
 
@@ -303,21 +304,24 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      */
     protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mMovieTitle;
-        private TextView mMovieDesc;
+//        private TextView mMovieDesc;
         private TextView mYear; // displays "year | language"
-        private ImageView mPosterImg;
-        private ProgressBar mProgress;
+//        private ImageView mPosterImg;
+//        private ProgressBar mProgress;
+
+        private MathView mathView;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             mMovieTitle = (TextView) itemView.findViewById(R.id.movie_title);
-            mMovieDesc = (TextView) itemView.findViewById(R.id.movie_desc);
+//            mMovieDesc = (TextView) itemView.findViewById(R.id.movie_desc);
+            mathView = (MathView) itemView.findViewById(R.id.equationView);
             mYear = (TextView) itemView.findViewById(R.id.movie_year);
-            mPosterImg = (ImageView) itemView.findViewById(R.id.movie_poster);
-            mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
+//            mPosterImg = (ImageView) itemView.findViewById(R.id.movie_poster);
+//            mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
 
-            mPosterImg.setBackgroundColor(getMatColor("A100"));
+//            mPosterImg.setBackgroundColor(getMatColor("A100"));
             itemView.setTag(itemView);
             itemView.setOnClickListener(this);
         }

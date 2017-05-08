@@ -91,6 +91,10 @@ dependencies {
     compile 'com.squareup:otto:1.3.8'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
+
+    //mathview
+    compile 'in.hourglass.mathrender:katexmathview:1.0'
+//    compile 'io.github.kexanie.library:MathView:0.0.6'
 }
 
 

@@ -225,9 +225,9 @@
         <item name="orange_800" type="color">#ef6c00</item>
         <item name="deep_orange_800" type="color">#d84315</item>
         <item name="brown_800" type="color">#4e342e</item>
-        <item name="grey_800" type="color">#424242</item>
         <item name="blue_grey_800" type="color">#37474f</item>
     </array>
+    <item name="grey_800" type="color">#424242</item>
     <array name="mdcolor_900">
         <item name="red_900" type="color">#b0120a</item>
         <item name="pink_900" type="color">#880e4f</item>
