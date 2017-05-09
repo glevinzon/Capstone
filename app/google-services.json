@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1063879156817-q772nm1ilu8thrapc0gh733ui9dm8ld6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.itp.glevinzon.capstone",
+            "certificate_hash": "5e323221dcd0e48fd1a32f68955b80750c702b24"
+          }
+        },
+        {
           "client_id": "1063879156817-u6lakertu7123uk19ms8hvtkrh249su8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

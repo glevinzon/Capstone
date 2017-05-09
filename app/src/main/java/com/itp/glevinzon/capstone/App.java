@@ -22,7 +22,7 @@ public class App extends Application {
 
         String username = randomAlphaNumeric(9);
         Utils.saveSharedSetting(this, HomeActivity.PREF_USER_NAME, username);
-        Utils.saveSharedSetting(this, HomeActivity.PREF_USER_ROLE, "user");
+        Utils.saveSharedSetting(this, HomeActivity.PREF_USER_ROLE, "admin");
 
         Stetho.initializeWithDefaults(this);
         Speech.init(this, getPackageName());

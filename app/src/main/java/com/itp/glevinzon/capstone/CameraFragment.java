@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -75,8 +76,8 @@ public class CameraFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         deviceUID = MathpixUUID.uuid(getContext());
-        webview_container=(RelativeLayout) view.findViewById(R.id.webview_container);
-        webView = (WebView) view.findViewById(R.id.webView);
+//        webview_container=(RelativeLayout) view.findViewById(R.id.webview_container);
+//        webView = (WebView) view.findViewById(R.id.webView);
         setupButton(view);
         setupCropControl(view);
 //        setupNewPhotoButton(view);
@@ -267,7 +268,13 @@ public class CameraFragment extends Fragment {
                 Log.d("Latex_NEW", latestLatex);
                 cropControl.setVisibility(View.GONE);
                 takePhotoButton.setVisibility(View.GONE);
-                loadLocalContent();
+//                loadLocalContent();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                AlertDialogToSaveRecordedAudio newFragment = AlertDialogToSaveRecordedAudio.newInstance();
+                Bundle bundle = new Bundle();
+//                bundle.putString("path", AudioSavePathInDevice);
+                newFragment.setArguments(bundle);
+                newFragment.show(ft, "Alert Save");
             }
         });
         task.execute(params);

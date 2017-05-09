@@ -58,13 +58,9 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
             Log.d(TAG, e.getMessage() + "");
         }
 
-//        editor.putBoolean("key_name", true); // Storing boolean - true/false
         editor.remove("device_token");
         editor.putString("device_token", token); // Storing string
-//        editor.putInt("key_name", "int value"); // Storing integer
-//        editor.putFloat("key_name", "float value"); // Storing float
-//        editor.putLong("key_name", "long value"); // Storing long
-//
+
         editor.commit(); // commit changes
         // Add custom implementation, as needed.
         callTokenApi(token).enqueue(new Callback<Token>() {
