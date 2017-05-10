@@ -263,16 +263,16 @@ public class CameraFragment extends Fragment {
 
             @Override
             public void onSuccess(String latex) {
-                Toast.makeText(getContext(), latex, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getContext(), latex, Toast.LENGTH_LONG).show();
                 latestLatex = latex;
                 Log.d("Latex_NEW", latestLatex);
                 cropControl.setVisibility(View.GONE);
                 takePhotoButton.setVisibility(View.GONE);
 //                loadLocalContent();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                AlertDialogToSaveRecordedAudio newFragment = AlertDialogToSaveRecordedAudio.newInstance();
+                AlertDialogToSaveCapturedEquation newFragment = AlertDialogToSaveCapturedEquation.newInstance();
                 Bundle bundle = new Bundle();
-//                bundle.putString("path", AudioSavePathInDevice);
+                bundle.putString("latex", latestLatex);
                 newFragment.setArguments(bundle);
                 newFragment.show(ft, "Alert Save");
             }

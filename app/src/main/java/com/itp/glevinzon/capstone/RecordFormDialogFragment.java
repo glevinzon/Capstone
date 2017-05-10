@@ -63,11 +63,14 @@ public class RecordFormDialogFragment extends DialogFragment {
 
     private RequestBody username;
 
+    private String latex;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Bundle bundle=this.getArguments();
         audioPath = bundle.getString("path");
+        latex = bundle.getString("latex");
 
         View rootView = inflater.inflate(R.layout.dialogfragment_recordform, container,
                 false);
