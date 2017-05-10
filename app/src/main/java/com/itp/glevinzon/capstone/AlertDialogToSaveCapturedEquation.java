@@ -7,6 +7,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 
+import com.mapzen.speakerbox.Speakerbox;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +31,11 @@ public class AlertDialogToSaveCapturedEquation extends DialogFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        Speakerbox speakerbox = new Speakerbox(getActivity().getApplication());
+        speakerbox.setActivity(getActivity());
+        speakerbox.remix("min", "minutes");
+        speakerbox.play(latex);
 
 //        Toast.makeText(getContext(), "Path: " + audioPath, Toast.LENGTH_LONG).show();
         return new AlertDialog.Builder(getActivity())

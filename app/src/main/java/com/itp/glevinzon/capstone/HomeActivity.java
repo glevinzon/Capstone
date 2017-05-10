@@ -43,6 +43,7 @@ import com.itp.glevinzon.capstone.models.Tag;
 import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
 import com.itp.glevinzon.capstone.utils.PaginationScrollListener;
 import com.itp.glevinzon.capstone.utils.Utils;
+import com.mapzen.speakerbox.Speakerbox;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import net.gotev.speech.GoogleVoiceTypingDisabledException;
@@ -324,7 +325,10 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         Log.d(TAG, result.getId() + "glevinzon was here");
         Speech.getInstance().unregisterDelegate();
         if (result.getAudioUrl() != null) {
-            startActivity(i);
+//            startActivity(i);
+            Speakerbox speakerbox = new Speakerbox(getApplication());
+            speakerbox.remix("min", "minutes");
+            speakerbox.play(result.getNote());
         } else {
             Toast.makeText(this, R.string.no_audio, Toast.LENGTH_LONG).show();
         }
