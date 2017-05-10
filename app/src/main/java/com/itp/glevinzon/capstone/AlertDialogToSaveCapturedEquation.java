@@ -49,13 +49,16 @@ public class AlertDialogToSaveCapturedEquation extends DialogFragment {
                         RecordFormDialogFragment newFragment = RecordFormDialogFragment.newInstance();
                         Bundle bundle = new Bundle();
                         bundle.putString("latex", latex);
+                        bundle.putString("mode", "capture");
                         newFragment.setArguments(bundle);
                         newFragment.show(ft, "Alert Save");
                     }
                 })
                 .setNegativeButton("Again", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.replace(R.id.layoutHome, new CameraFragment(), "CameraFragment");
+                        ft.commit();
                     }
                 }).create();
     }

@@ -47,9 +47,10 @@ public interface CapstoneService {
             @Query("page") int page,
             @Query("count") int count
     );
+
     @GET("equations/related")
     Call<Search> getRelated(
-            @Query("eqId")  String eqId,
+            @Query("eqId") String eqId,
             @Query("page") int page,
             @Query("count") int count
     );
@@ -60,8 +61,16 @@ public interface CapstoneService {
 
     @POST("equations")
     @Multipart
-    Call<Equation> saveEquation(
+    Call<Equation> saveRecordedEquation(
             @Part MultipartBody.Part file,
+            @Part("username") RequestBody username,
+            @Part("name") RequestBody name,
+            @Part("note") RequestBody note,
+            @Part("tags") RequestBody tags);
+
+    @POST("equations")
+    @Multipart
+    Call<Equation> saveCapturedEquation(
             @Part("username") RequestBody username,
             @Part("name") RequestBody name,
             @Part("note") RequestBody note,

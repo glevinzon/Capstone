@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import katex.hourglass.in.mathlib.MathView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -44,6 +46,7 @@ public class RecordFormDialogFragment extends DialogFragment {
     private MultiAutoCompleteTextView multiTextAutoComplete;
 
     private String audioPath = "";
+    private String mode = "";
 
     private static final String TAG = "RecordForm";
 
@@ -65,12 +68,15 @@ public class RecordFormDialogFragment extends DialogFragment {
 
     private String latex;
 
+    private MathView mathView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Bundle bundle=this.getArguments();
         audioPath = bundle.getString("path");
         latex = bundle.getString("latex");
+        mode = bundle.getString("mode");
 
         View rootView = inflater.inflate(R.layout.dialogfragment_recordform, container,
                 false);
@@ -102,6 +108,23 @@ public class RecordFormDialogFragment extends DialogFragment {
         inputName.addTextChangedListener(new MyTextWatcher(inputName));
         inputNote.addTextChangedListener(new MyTextWatcher(inputNote));
 
+        mathView = (MathView) view.findViewById(R.id.formEquationView);
+
+        if(mode.equals("capture")){
+            inputLayoutName.setVisibility(View.GONE);
+            inputLayoutNote.setVisibility(View.GONE);
+
+            String laTex = "" + latex;
+            String tex = "$ "+ laTex +" $";
+            if(!laTex.isEmpty()){
+                mathView.setDisplayText(tex);
+            }
+        }
+
+        if(mode.equals("record")){
+            mathView.setVisibility(View.GONE);
+        }
+
         Button btnSave = (Button) view.findViewById(R.id.btn_save);
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,46 +147,78 @@ public class RecordFormDialogFragment extends DialogFragment {
     }
 
     private void submitForm() {
-        if (!validateName()) {
-            return;
-        }
-
-        if (!validateNote()) {
-            return;
-        }
-
-        if (!validateTag()) {
-            return;
-        }
-
         progressDialog.show();
 
-        // Map is used to multipart the file using okhttp3.RequestBody
-        File file = new File(audioPath);
-
-        // Parsing any Media type file
-        RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
-        fileToUpload = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-        filename = RequestBody.create(MediaType.parse("text/plain"), file.getName());
-
-        callSaveEquationApi().enqueue(new Callback<Equation>() {
-            @Override
-            public void onResponse(Call<Equation> call, Response<Equation> response) {
-                progressDialog.dismiss();
+        if(mode.equals("record")){
+            if (!validateName()) {
+                return;
             }
 
-            @Override
-            public void onFailure(Call<Equation> call, Throwable t) {
-
+            if (!validateNote()) {
+                return;
             }
-        });
+
+            if (!validateTag()) {
+                return;
+            }
+            // Map is used to multipart the file using okhttp3.RequestBody
+            File file = new File(audioPath);
+
+            // Parsing any Media type file
+            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
+            fileToUpload = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+            filename = RequestBody.create(MediaType.parse("text/plain"), file.getName());
+
+            callSaveRecordEquationApi().enqueue(new Callback<Equation>() {
+                @Override
+                public void onResponse(Call<Equation> call, Response<Equation> response) {
+                    progressDialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(Call<Equation> call, Throwable t) {
+
+                }
+            });
+        }
+        if(mode.equals("capture")){
+            name = RequestBody.create(MediaType.parse("text/plain"), latex);
+            note = RequestBody.create(MediaType.parse("text/plain"), latex);
+            if (!validateTag()) {
+                return;
+            }
+            // Map is used to multipart the file using okhttp3.RequestBody
+            callSaveCaptureEquationApi().enqueue(new Callback<Equation>() {
+                @Override
+                public void onResponse(Call<Equation> call, Response<Equation> response) {
+                    progressDialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(Call<Equation> call, Throwable t) {
+
+                }
+            });
+        }
 
         getDialog().dismiss();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.layoutHome, new CameraFragment(), "CameraFragment");
+        ft.commit();
     }
 
-    private Call<Equation> callSaveEquationApi() {
-        return equationService.saveEquation(
+    private Call<Equation> callSaveRecordEquationApi() {
+        return equationService.saveRecordedEquation(
                 fileToUpload,
+                username,
+                name,
+                note,
+                tags
+        );
+    }
+
+    private Call<Equation> callSaveCaptureEquationApi() {
+        return equationService.saveCapturedEquation(
                 username,
                 name,
                 note,

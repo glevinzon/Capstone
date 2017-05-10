@@ -29,6 +29,7 @@ public class AlertDialogToSaveRecordedAudio extends DialogFragment {
                         RecordFormDialogFragment newFragment = RecordFormDialogFragment.newInstance();
                         Bundle bundle = new Bundle();
                         bundle.putString("path", audioPath);
+                        bundle.putString("mode", "record");
                         newFragment.setArguments(bundle);
                         newFragment.show(ft, "Alert Save");
                     }

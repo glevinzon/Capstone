@@ -163,7 +163,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         Menu nav_Menu = mNavigationView.getMenu();
 
-        if(user_role != null){
+        if (user_role != null) {
             if (user_role.equals("admin")) {
                 nav_Menu.findItem(R.id.navigation_item_4).setVisible(true);
             } else {
@@ -171,43 +171,37 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
             }
         }
 
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
+        mNavigationView.setNavigationItemSelectedListener(menuItem -> {
 
-                menuItem.setChecked(true);
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_item_1:
-//                        Snackbar.make(mContentFrame, "Item One", Snackbar.LENGTH_SHORT).show();
-                        Intent intent = getIntent();
-                        overridePendingTransition(0, 0);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        finish();
-                        overridePendingTransition(0, 0);
-                        startActivity(intent);
-                        mCurrentSelectedPosition = 0;
-                        return true;
-                    case R.id.navigation_item_2:
-//                        Snackbar.make(mContentFrame, "Item One", Snackbar.LENGTH_SHORT).show();
-                        onButtonClick();
-                        mCurrentSelectedPosition = 1;
-                        return true;
-                    case R.id.navigation_item_3:
-//                        Snackbar.make(mContentFrame, "Item Two", Snackbar.LENGTH_SHORT).show();
-                        onRecordButtonClick();
-                        mCurrentSelectedPosition = 2;
-                        return true;
-                    case R.id.navigation_item_4:
-                        onRecordButtonClick();
-                        mCurrentSelectedPosition = 3;
-                        return true;
-                    case R.id.navigation_item_5:
-                        onRecordButtonClick();
-                        mCurrentSelectedPosition = 4;
-                        return true;
-                    default:
-                        return true;
-                }
+            menuItem.setChecked(true);
+            switch (menuItem.getItemId()) {
+                case R.id.navigation_item_1:
+                    Intent intent = getIntent();
+                    overridePendingTransition(0, 0);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    finish();
+                    overridePendingTransition(0, 0);
+                    startActivity(intent);
+                    mCurrentSelectedPosition = 0;
+                    return true;
+                case R.id.navigation_item_2:
+                    onButtonClick();
+                    mCurrentSelectedPosition = 1;
+                    return true;
+                case R.id.navigation_item_3:
+                    onRecordButtonClick();
+                    mCurrentSelectedPosition = 2;
+                    return true;
+                case R.id.navigation_item_4:
+                    onRecordButtonClick();
+                    mCurrentSelectedPosition = 3;
+                    return true;
+//                case R.id.navigation_item_5:
+//                    onRecordButtonClick();
+//                    mCurrentSelectedPosition = 4;
+//                    return true;
+                default:
+                    return true;
             }
         });
 
@@ -230,7 +224,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
         fabRecord = (FloatingActionButton) findViewById(R.id.record_fab);
         fabRecord.setOnClickListener(view -> {
-            onRecordButtonClick();
+            onCaptureButtonClick();
         });
 
         //pagination
@@ -324,13 +318,13 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         i.putExtra("audioUrl", result.getAudioUrl());
         Log.d(TAG, result.getId() + "glevinzon was here");
         Speech.getInstance().unregisterDelegate();
-        if (result.getAudioUrl() != null) {
-//            startActivity(i);
+        if (result.getNote() != null && result.getAudioUrl() == null) {
             Speakerbox speakerbox = new Speakerbox(getApplication());
             speakerbox.remix("min", "minutes");
             speakerbox.play(result.getNote());
-        } else {
-            Toast.makeText(this, R.string.no_audio, Toast.LENGTH_LONG).show();
+        }
+        if (result.getAudioUrl() != null) {
+            startActivity(i);
         }
     }
 
@@ -677,7 +671,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         }
     }
 
-    private void onRecordButtonClick() {
+    public void onCaptureButtonClick() {
 //        fab.setVisibility(View.GONE);
         rv.setVisibility(View.GONE);
         searchView.setVisibility(View.GONE);
@@ -685,6 +679,19 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
         ft.replace(R.id.layoutHome, new CameraFragment(), "CameraFragment");
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
+    }
+
+    private void onRecordButtonClick() {
+//        fab.setVisibility(View.GONE);
+        rv.setVisibility(View.GONE);
+        searchView.setVisibility(View.GONE);
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.layoutHome, new RecordFragment(), "RecordFragment");
         // or ft.add(R.id.your_placeholder, new FooFragment());
         // Complete the changes added above
         ft.commit();

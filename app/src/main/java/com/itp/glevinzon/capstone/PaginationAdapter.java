@@ -136,13 +136,18 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             case ITEM:
                 final ViewHolder viewHolder = (ViewHolder) holder;
 
-                viewHolder.mMovieTitle.setText(data.getName());
-
+//                viewHolder.mMovieTitle.setText(data.getName());
+                String mode = "";
+                if(data.getAudioUrl() != null) {
+                    mode = "Audio";
+                } else {
+                    mode = "TTS";
+                }
 
                 viewHolder.mYear.setText(
                         data.getCreatedAt().substring(0, 4)  // we want the year only
                                 + " | "
-                                + "EN"
+                                + mode
                 );
 //                viewHolder.mMovieDesc.setText(data.getNote());
                 ArrayList<String> arrList = new ArrayList<String>();
@@ -157,7 +162,8 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     chipCloud.addChips(arrList);
                 }
 
-                String laTex = "";
+                viewHolder.mMovieTitle.setVisibility(View.GONE);
+                String laTex = "" + data.getName();
                 String tex = "$ "+ laTex +" $";
                 if(!laTex.isEmpty()){
                     viewHolder.mathView.setDisplayText(tex);

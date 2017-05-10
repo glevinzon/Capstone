@@ -20,11 +20,11 @@
             android:checked="true"
             android:icon="@drawable/ok_mark"
             android:title="Manage Requests" />
-        <item
-            android:id="@+id/navigation_item_5"
-            android:checked="true"
-            android:icon="@drawable/smartphone"
-            android:title="Local Recordings" />
+        <!--<item-->
+            <!--android:id="@+id/navigation_item_5"-->
+            <!--android:checked="true"-->
+            <!--android:icon="@drawable/smartphone"-->
+            <!--android:title="Local Recordings" />-->
     </group>
 
 
