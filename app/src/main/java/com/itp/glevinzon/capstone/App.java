@@ -43,7 +43,7 @@ public class App extends Application {
         if (!capstonePref.contains("user_name")) {
             String username = randomAlphaNumeric(9);
             Utils.saveSharedSetting(this, HomeActivity.PREF_USER_NAME, username);
-            Utils.saveSharedSetting(this, HomeActivity.PREF_USER_ROLE, "admin");
+            Utils.saveSharedSetting(this, HomeActivity.PREF_USER_ROLE, "user");
         }
 
         Stetho.initializeWithDefaults(this);

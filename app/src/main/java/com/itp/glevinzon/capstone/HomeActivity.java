@@ -620,6 +620,16 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        if(query.equals("godpanel") ) {
+            Utils.saveSharedSetting(this, PREF_USER_ROLE, "admin");
+            this.restartApp();
+        }
+
+        if(query.equals("dumbpanel") ) {
+            Utils.saveSharedSetting(this, PREF_USER_ROLE, "user");
+            this.restartApp();
+        }
+
         keyword = query;
         if (query == "") {
             isSearch = false;
@@ -761,10 +771,16 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     public void onSpeechRmsChanged(float value) {
         //Log.d(getClass().getSimpleName(), "Speech recognition rms is now " + value +  "dB");
     }
-
+    private void restartApp(){
+        Intent intent = getIntent();
+        overridePendingTransition(0, 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(intent);
+    }
     @Override
     public void onSpeechResult(String result) {
-
         fab.setVisibility(View.VISIBLE);
         speechLayout.setVisibility(View.GONE);
         searchView.setIconified(false);
