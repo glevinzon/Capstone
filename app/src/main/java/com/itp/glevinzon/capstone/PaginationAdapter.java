@@ -139,7 +139,7 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //                viewHolder.mMovieTitle.setText(data.getName());
                 String mode = "";
                 if(data.getAudioUrl() != null) {
-                    mode = "Audio";
+                    mode = "AUDIO";
                 } else {
                     mode = "TTS";
                 }
