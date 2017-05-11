@@ -61,7 +61,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener, RecyclerItemClickListener.OnItemClickListener {
+public class HomeActivity extends AppCompatActivity implements RequestFragment.OnListFragmentInteractionListener, PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener, RecyclerItemClickListener.OnItemClickListener {
     //pagination
     private static final String TAG = "HomeActivity";
     private static final int PAGE_START = 1;
@@ -193,7 +193,7 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
                     mCurrentSelectedPosition = 2;
                     return true;
                 case R.id.navigation_item_4:
-                    onRecordButtonClick();
+                    onRequestButtonClick();
                     mCurrentSelectedPosition = 3;
                     return true;
 //                case R.id.navigation_item_5:
@@ -694,6 +694,19 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
         ft.commit();
     }
 
+    public void onRequestButtonClick() {
+//        fab.setVisibility(View.GONE);
+        rv.setVisibility(View.GONE);
+        searchView.setVisibility(View.GONE);
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.layoutHome, new RequestFragment(), "RequestFragment");
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+        // Complete the changes added above
+        ft.commit();
+    }
+
     private void onRecordButtonClick() {
 //        fab.setVisibility(View.GONE);
         rv.setVisibility(View.GONE);
@@ -898,5 +911,10 @@ public class HomeActivity extends AppCompatActivity implements PaginationAdapter
     public static String readSharedSetting(Context ctx, String settingName, String defaultValue) {
         SharedPreferences sharedPref = ctx.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         return sharedPref.getString(settingName, defaultValue);
+    }
+
+    @Override
+    public void onListFragmentInteraction(com.itp.glevinzon.capstone.models.Requests.Datum item) {
+
     }
 }

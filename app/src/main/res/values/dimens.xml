@@ -38,4 +38,5 @@
 
     <dimen name="crop_control_width">300dp</dimen>
     <dimen name="crop_control_height">200dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>
