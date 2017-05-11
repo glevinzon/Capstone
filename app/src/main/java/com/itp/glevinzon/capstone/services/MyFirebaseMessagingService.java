@@ -14,7 +14,7 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.itp.glevinzon.capstone.MainActivity;
+import com.itp.glevinzon.capstone.HomeActivity;
 import com.itp.glevinzon.capstone.R;
 
 /**
@@ -33,7 +33,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String title=remoteMessage.getNotification().getTitle();
         String body=remoteMessage.getNotification().getBody();
 
-        Intent intent=new Intent(this,MainActivity.class);
+        Intent intent=new Intent(this,HomeActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
                 PendingIntent.FLAG_ONE_SHOT);
         Bitmap notifyImage = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
