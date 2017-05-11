@@ -6,10 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.itp.glevinzon.capstone.RequestFragment.OnListFragmentInteractionListener;
 import com.itp.glevinzon.capstone.models.Requests.Datum;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Datum} and makes a call to the
@@ -36,8 +40,17 @@ public class MyRequestRecyclerViewAdapter extends RecyclerView.Adapter<MyRequest
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getCode());
+        holder.mIdView.setText(mValues.get(position).getCode().toUpperCase());
         holder.mContentView.setText(mValues.get(position).getName());
+
+        Date localTime = null;
+        try {
+            localTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(mValues.get(position).getCreatedAt());
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+
+        holder.v.setReferenceTime(localTime.getTime());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +73,7 @@ public class MyRequestRecyclerViewAdapter extends RecyclerView.Adapter<MyRequest
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final RelativeTimeTextView v;
         public Datum mItem;
 
         public ViewHolder(View view) {
@@ -67,6 +81,7 @@ public class MyRequestRecyclerViewAdapter extends RecyclerView.Adapter<MyRequest
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
+            v = (RelativeTimeTextView )view.findViewById(R.id.timestamp);
         }
 
         @Override

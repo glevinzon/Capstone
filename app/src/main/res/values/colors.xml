@@ -280,8 +280,9 @@
         <item name="lime_A200" type="color">#eeff41</item>
         <item name="yellow_A200" type="color">#ffff00</item>
         <item name="orange_A200" type="color">#ffab40</item>
-        <item name="deep_orange_A200" type="color">#ff6e40</item>
+
     </array>
+    <item name="deep_orange_A200" type="color">#ff6e40</item>
     <array name="mdcolor_A400">
         <item name="red_A400" type="color">#ff2d6f</item>
         <item name="pink_A400" type="color">#f50057</item>
