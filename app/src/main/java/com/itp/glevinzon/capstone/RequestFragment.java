@@ -37,6 +37,8 @@ public class RequestFragment extends Fragment {
     private List<Datum> requestResult;
     private CapstoneService equationService;
 
+    static MyRequestRecyclerViewAdapter adapter;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -84,7 +86,8 @@ public class RequestFragment extends Fragment {
                     } else {
                         recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
                     }
-                    recyclerView.setAdapter(new MyRequestRecyclerViewAdapter(requestResult, mListener));
+                    adapter = new MyRequestRecyclerViewAdapter(requestResult, mListener);
+                    recyclerView.setAdapter(adapter);
                 }
 
             }

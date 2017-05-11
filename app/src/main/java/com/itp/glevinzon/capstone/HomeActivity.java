@@ -915,6 +915,11 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
 
     @Override
     public void onListFragmentInteraction(com.itp.glevinzon.capstone.models.Requests.Datum item) {
-
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        AlertDialogToActivateRequest newFragment = AlertDialogToActivateRequest.newInstance();
+        Bundle bundle = new Bundle();
+        bundle.putString("eqId", item.getId().toString());
+        newFragment.setArguments(bundle);
+        newFragment.show(ft, "Alert Request Activation");
     }
 }

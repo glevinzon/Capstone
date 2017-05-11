@@ -89,4 +89,33 @@ public class MyRequestRecyclerViewAdapter extends RecyclerView.Adapter<MyRequest
             return super.toString() + " '" + mContentView.getText() + "'";
         }
     }
+
+    public void add(Datum r) {
+        mValues.add(r);
+        notifyItemInserted(mValues.size() - 1);
+    }
+
+    public void addAll(List<Datum> moveResults) {
+        for (Datum data : moveResults) {
+            add(data);
+        }
+    }
+
+    public void remove(Datum r) {
+        int position = mValues.indexOf(r);
+        if (position > -1) {
+            mValues.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public Datum getItem(int position) {
+        return mValues.get(position);
+    }
 }
