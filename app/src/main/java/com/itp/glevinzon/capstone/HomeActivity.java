@@ -682,9 +682,18 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
     }
 
     public void onCaptureButtonClick() {
-//        fab.setVisibility(View.GONE);
-        rv.setVisibility(View.GONE);
-        searchView.setVisibility(View.GONE);
+        if (rv.getVisibility() == View.VISIBLE) {
+            rv.setVisibility(View.GONE);
+        }
+
+        if (fab.getVisibility() == View.VISIBLE) {
+            fab.setVisibility(View.GONE);
+        }
+
+        if (searchView.getVisibility() == View.VISIBLE) {
+            searchView.setVisibility(View.GONE);
+        }
+
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
@@ -695,9 +704,17 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
     }
 
     public void onRequestButtonClick() {
-//        fab.setVisibility(View.GONE);
-        rv.setVisibility(View.GONE);
-        searchView.setVisibility(View.GONE);
+        if (rv.getVisibility() == View.VISIBLE) {
+            rv.setVisibility(View.GONE);
+        }
+
+        if (fab.getVisibility() == View.VISIBLE) {
+            fab.setVisibility(View.GONE);
+        }
+
+        if (searchView.getVisibility() == View.VISIBLE) {
+            searchView.setVisibility(View.GONE);
+        }
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
@@ -708,9 +725,17 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
     }
 
     private void onRecordButtonClick() {
-//        fab.setVisibility(View.GONE);
-        rv.setVisibility(View.GONE);
-        searchView.setVisibility(View.GONE);
+        if (rv.getVisibility() == View.VISIBLE) {
+            rv.setVisibility(View.GONE);
+        }
+
+        if (fab.getVisibility() == View.VISIBLE) {
+            fab.setVisibility(View.GONE);
+        }
+
+        if (searchView.getVisibility() == View.VISIBLE) {
+            searchView.setVisibility(View.GONE);
+        }
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         // Replace the contents of the container with the new fragment
