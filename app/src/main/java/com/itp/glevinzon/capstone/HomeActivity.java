@@ -64,7 +64,7 @@ import retrofit2.Response;
 public class HomeActivity extends AppCompatActivity implements RequestFragment.OnListFragmentInteractionListener, PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener, RecyclerItemClickListener.OnItemClickListener {
     //pagination
     private static final String TAG = "HomeActivity";
-    private static final int PAGE_START = 1;
+    private static final int PAGE_START = 0;
     PaginationAdapter adapter;
     LinearLayoutManager linearLayoutManager;
     RecyclerView rv;
@@ -502,11 +502,9 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
                 adapter.removeLoadingFooter();
                 isLoading = false;
 
-//                adapter.clear();
-//                btnRetry.setVisibility(View.VISIBLE);
-//                hideErrorView();
+                adapter.clear();
 
-                loadFirstPage();
+//                loadFirstPage();
 
                 data = fetchSearchResults(response);
 
