@@ -37,10 +37,11 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int ITEM = 0;
     private static final int LOADING = 1;
     private static final String TAG = "ADAPTER";
-    private String BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/not-applicable.png";
+
     private List<Datum> equationResults;
     private List<Tag> equationTags;
     private List<Record> equationRecords;
+    private ArrayList<String> arrList;
     private Context context;
 
     private ItemClickListener clickListener;
@@ -59,6 +60,8 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.context = context;
         this.mCallback = (PaginationAdapterCallback) context;
         equationResults = new ArrayList<>();
+        equationTags = new ArrayList<>();
+        equationRecords = new ArrayList<>();
     }
 
     public List<Datum> getEquations() {
@@ -71,10 +74,6 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void setRecords(List<Record> records) {
         this.equationRecords = records ;
-    }
-
-    public void setMovies(List<Datum> equationResults) {
-        this.equationResults = equationResults;
     }
 
 //
@@ -111,7 +110,7 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+        Log.d(TAG, "onBindViewHolder: " + position);
         Datum data = equationResults.get(position);
 
         switch (getItemViewType(position)) {
@@ -131,20 +130,23 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 + mode
                 );
 
-                ArrayList<String> arrList = new ArrayList<String>();
+                arrList = new ArrayList<String>();
 
                 if(equationRecords != null) {
                     for(Record record : equationRecords) {
                         if(data.getId().equals(record.getEqId())){
-                            for(Tag tag : equationTags) {
-                                if(record.getTagId().equals(tag.getId())){
-                                    arrList.add(tag.getName());
+                            if(equationTags != null) {
+                                for(Tag tag : equationTags) {
+                                    if(record.getTagId().equals(tag.getId())){
+                                        arrList.add(tag.getName());
+                                    }
                                 }
                             }
                         }
                     }
 
                     chipCloud.addChips(arrList);
+                    arrList = null;
                 }
 
 
@@ -179,9 +181,16 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "GLEVINZON WAS HERE : " + equationResults);
-
+        Log.d(TAG, "getItemCount: " + equationResults.size());
         return equationResults == null ? 0 : equationResults.size();
+    }
+
+    public int getItemCountByTag() {
+        return equationResults == null ? 0 : equationResults.size();
+    }
+
+    public int getItemCountByRecord() {
+        return equationRecords == null ? 0 : equationRecords.size();
     }
 
 
@@ -194,13 +203,13 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return (position == equationResults.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
-
     /*
    Helpers
    _________________________________________________________________________________________________
     */
 
     public void add(Datum r) {
+        Log.d(TAG, "add: " + r);
         equationResults.add(r);
         notifyItemInserted(equationResults.size() - 1);
     }
@@ -219,11 +228,34 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    public void removeByTag(Tag r) {
+        int position = equationTags.indexOf(r);
+        if (position > -1) {
+            equationTags.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void removeByRecord(Record r) {
+        int position = equationRecords.indexOf(r);
+        if (position > -1) {
+            equationRecords.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
     public void clear() {
         isLoadingAdded = false;
         while (getItemCount() > 0) {
             remove(getItem(0));
         }
+        while (getItemCountByTag() > 0) {
+            removeByTag(getItemByTag(0));
+        }
+        while (getItemCountByRecord() > 0) {
+            removeByRecord(getItemByRecord(0));
+        }
+        arrList = null;
     }
 
     public boolean isEmpty() {
@@ -250,6 +282,14 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public Datum getItem(int position) {
         return equationResults.get(position);
+    }
+
+    public Tag getItemByTag(int position) {
+        return equationTags.get(position);
+    }
+
+    public Record getItemByRecord(int position) {
+        return equationRecords.get(position);
     }
 
     /**
@@ -289,24 +329,15 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      */
     protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mMovieTitle;
-//        private TextView mMovieDesc;
-        private TextView mYear; // displays "year | language"
-//        private ImageView mPosterImg;
-//        private ProgressBar mProgress;
-
+        private TextView mYear;
         private MathView mathView;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             mMovieTitle = (TextView) itemView.findViewById(R.id.movie_title);
-//            mMovieDesc = (TextView) itemView.findViewById(R.id.movie_desc);
             mathView = (MathView) itemView.findViewById(R.id.equationView);
             mYear = (TextView) itemView.findViewById(R.id.movie_year);
-//            mPosterImg = (ImageView) itemView.findViewById(R.id.movie_poster);
-//            mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
-
-//            mPosterImg.setBackgroundColor(getMatColor("A100"));
 
             FlexboxLayout flexbox = (FlexboxLayout) itemView.findViewById(R.id.flexbox);
 

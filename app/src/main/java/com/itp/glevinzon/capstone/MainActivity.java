@@ -350,10 +350,10 @@ public class MainActivity extends AppCompatActivity implements PaginationAdapter
                 TOTAL_PAGES = fetchLastPage(response);
 
                 if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
-                    adapter.addLoadingFooter();
+//                    adapter.addLoadingFooter();
                 } else {
                     isLastPage = true;
-                    adapter.removeLoadingFooter();
+//                    adapter.removeLoadingFooter();
                 }
             }
 

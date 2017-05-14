@@ -49,6 +49,7 @@ public class Utils {
         speakerbox.remix("\\operatorname{sin}", "sine");
         speakerbox.remix("\\operatorname{cos}", "cosine");
         speakerbox.remix("\\operatorname{tan}", "tangent");
+        speakerbox.remix("-", "minus");
         return speakerbox;
     }
 

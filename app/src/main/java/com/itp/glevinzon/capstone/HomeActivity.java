@@ -365,10 +365,10 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
                 TOTAL_PAGES = fetchLastPage(response);
 
                 if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
-                    adapter.addLoadingFooter();
+//                    adapter.addLoadingFooter();
                 } else {
                     isLastPage = true;
-                    adapter.removeLoadingFooter();
+//                    adapter.removeLoadingFooter();
                 }
 
                 swipeContainer.setRefreshing(false);
