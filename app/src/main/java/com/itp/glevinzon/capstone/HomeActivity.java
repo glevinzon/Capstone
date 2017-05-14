@@ -518,10 +518,10 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
                     adapter.addAll(data);
 
                     if (currentPage != TOTAL_PAGES || currentPage < TOTAL_PAGES) {
-                        adapter.addLoadingFooter();
+//                        adapter.addLoadingFooter();
                     } else {
                         isLastPage = true;
-                        adapter.removeLoadingFooter();
+//                        adapter.removeLoadingFooter();
                     }
                 } else {
                     adapter.clear();
