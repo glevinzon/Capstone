@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
 import com.itp.glevinzon.capstone.models.Datum;
+import com.itp.glevinzon.capstone.models.Record;
 import com.itp.glevinzon.capstone.models.Tag;
 import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
 
@@ -39,6 +40,7 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private String BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/not-applicable.png";
     private List<Datum> equationResults;
     private List<Tag> equationTags;
+    private List<Record> equationRecords;
     private Context context;
 
     private ItemClickListener clickListener;
@@ -62,8 +64,13 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public List<Datum> getEquations() {
         return equationResults;
     }
+
     public void setTags(List<Tag> tags) {
         this.equationTags = tags ;
+    }
+
+    public void setRecords(List<Record> records) {
+        this.equationRecords = records ;
     }
 
     public void setMovies(List<Datum> equationResults) {
@@ -106,38 +113,12 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         Datum data = equationResults.get(position);
-        if (data.getAudioUrl() != null) {
-            try {
-                String s = data.getAudioUrl();
-                String file = s.substring(s.lastIndexOf("."));
-                String extension = file.substring(file.indexOf("."));
-
-                if (extension.equals(".m4a")) {
-                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-mov.png";
-                } else if (extension.equals(".3gp")) {
-                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-avi.png";
-                } else if (extension.equals(".mp4")) {
-                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-mpg.png";
-                } else if (extension.equals(".mp3")) {
-                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-mp3.png";
-                } else if (extension.equals(".wav") ) {
-                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-wav.png";
-                } else if (extension.equals(".mkv")) {
-                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-wma.png";
-                } else if (extension.equals(".ogg") ) {
-                    BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/041-wav.png";
-                }
-            } catch (Exception e) {
-                Log.d(TAG, "Glevinzon Dapal" + e.getMessage());
-            }
-        }
 
         switch (getItemViewType(position)) {
             case ITEM:
                 final ViewHolder viewHolder = (ViewHolder) holder;
 
-//                viewHolder.mMovieTitle.setText(data.getName());
-                String mode = "";
+                String mode;
                 if(data.getAudioUrl() != null) {
                     mode = "AUDIO";
                 } else {
@@ -149,18 +130,23 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 + " | "
                                 + mode
                 );
-//                viewHolder.mMovieDesc.setText(data.getNote());
+
                 ArrayList<String> arrList = new ArrayList<String>();
 
-                if(equationTags != null){
-                    for (Tag temp : equationTags) {
-                        if(data.getId().equals(temp.getId())){
-                            arrList.add(temp.getName());
+                if(equationRecords != null) {
+                    for(Record record : equationRecords) {
+                        if(data.getId().equals(record.getEqId())){
+                            for(Tag tag : equationTags) {
+                                if(record.getTagId().equals(tag.getId())){
+                                    arrList.add(tag.getName());
+                                }
+                            }
                         }
                     }
 
                     chipCloud.addChips(arrList);
                 }
+
 
                 viewHolder.mMovieTitle.setVisibility(View.GONE);
                 String laTex = "" + data.getName();
@@ -169,36 +155,6 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     viewHolder.mathView.setDisplayText(tex);
                 }
 
-
-                /**
-                 * Using Glide to handle image loading.
-                 * Learn more about Glide here:
-                 * <a href="http://blog.grafixartist.com/image-gallery-app-android-studio-1-4-glide/" />
-                 */
-                Log.d(TAG, "Glide " + BASE_URL_IMG);
-//                Glide
-//                        .with(context)
-//                        .load(BASE_URL_IMG)
-//                        .listener(new RequestListener<String, GlideDrawable>() {
-//                            @Override
-//                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-//                                // TODO: 08/11/16 handle failure
-//                                viewHolder.mProgress.setVisibility(View.GONE);
-//                                return false;
-//                            }
-//
-//                            @Override
-//                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-//                                // image ready, hide progress now
-//                                viewHolder.mProgress.setVisibility(View.GONE);
-//                                return false;   // return false if you want Glide to handle everything else.
-//                            }
-//                        })
-//                        .diskCacheStrategy(DiskCacheStrategy.ALL)   // cache both original & resized image
-////                        .centerCrop()
-//                        .crossFade()
-//                        .into(viewHolder.mPosterImg);
-                BASE_URL_IMG = "http://apicapstone.herokuapp.com/images/extension-icons/not-applicable.png";
                 break;
 
             case LOADING:

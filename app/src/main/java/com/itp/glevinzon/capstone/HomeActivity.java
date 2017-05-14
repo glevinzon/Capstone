@@ -38,6 +38,7 @@ import com.itp.glevinzon.capstone.api.CapstoneService;
 import com.itp.glevinzon.capstone.models.Capstone;
 import com.itp.glevinzon.capstone.models.Datum;
 import com.itp.glevinzon.capstone.models.Equations;
+import com.itp.glevinzon.capstone.models.Record;
 import com.itp.glevinzon.capstone.models.Search;
 import com.itp.glevinzon.capstone.models.Tag;
 import com.itp.glevinzon.capstone.utils.PaginationAdapterCallback;
@@ -64,7 +65,7 @@ import retrofit2.Response;
 public class HomeActivity extends AppCompatActivity implements RequestFragment.OnListFragmentInteractionListener, PaginationAdapterCallback, SpeechDelegate, SearchView.OnQueryTextListener, RecyclerItemClickListener.OnItemClickListener {
     //pagination
     private static final String TAG = "HomeActivity";
-    private static final int PAGE_START = 0;
+    private static final int PAGE_START = 1;
     PaginationAdapter adapter;
     LinearLayoutManager linearLayoutManager;
     RecyclerView rv;
@@ -86,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
     private Equations eqData;
     private List<Datum> data;
     private List<Tag> tags;
+    private List<Record> records;
 
     private String keyword = "";
     private Boolean isSearch = false;
@@ -293,9 +295,6 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(() -> {
-            // Your code to refresh the list here.
-            // Make sure you call swipeContainer.setRefreshing(false)
-            // once the network request has completed successfully.
             adapter.clear();
             loadFirstPage();
         });
@@ -354,8 +353,10 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
 
                 data = fetchResults(response);
                 tags = fetchTags(response);
+                records = fetchRecords(response);
 
                 adapter.setTags(tags);
+                adapter.setRecords(records);
 
                 Log.d(TAG, data + " Glevinzon");
                 progressBar.setVisibility(View.GONE);
@@ -399,6 +400,10 @@ public class HomeActivity extends AppCompatActivity implements RequestFragment.O
 
     private List<Tag> fetchTags(Response<Capstone> response) {
         return response.body().getTags();
+    }
+
+    private List<Record> fetchRecords(Response<Capstone> response) {
+        return response.body().getRecords();
     }
 
     private Integer fetchLastPage(Response<Capstone> response) {
