@@ -25,7 +25,7 @@ public class CapstoneApi {
             retrofit = new Retrofit.Builder()
                     .client(buildClient())
                     .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl("http://apicapstone.herokuapp.com/app/")
+                    .baseUrl("http://192.168.8.104/app/")
 //                    .baseUrl("http://localhost:3333/app/")
                     .build();
         }
